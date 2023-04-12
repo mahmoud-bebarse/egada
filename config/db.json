@@ -1,0 +1,18 @@
+{
+    "development": {
+      "_USERNAME": "root",
+      "_PASSWORD": null,
+      "_DBNAME": "boilerplate",
+      "_INSTANCE": "127.0.0.1"
+    },
+    "test": {
+      "_USERNAME": "root",
+      "_PASSWORD": null,
+      "_DBNAME": "boilerplate",
+      "_INSTANCE": "127.0.0.1"
+    },
+    "production": {
+      "use_env_variable":"DATABASE_URL",
+      "dialect": "mysql"
+    }
+  } 
