@@ -2,8 +2,8 @@ const mongoose = require("mongoose");
 
 const reservationSchema = new mongoose.Schema({
   patient: { type: mongoose.Schema.Types.ObjectId, ref: "Patient" },
-    doctor: { type: mongoose.Schema.Types.ObjectId, ref: "Doctor" },
-  time: {type: mongoose.Schema.Types.ObjectId},
+  doctor: { type: mongoose.Schema.Types.ObjectId, ref: "Doctor" },
+  schedule: { type: mongoose.Schema.Types.ObjectId, ref: "Schedule" },
 
   status: { type: Boolean, default: true },
   entryDate: { type: Date, default: Date.now },

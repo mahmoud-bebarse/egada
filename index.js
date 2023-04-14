@@ -1,22 +1,26 @@
 // importing the dependencies
-require('dotenv').config()
+require("dotenv").config();
 var path = require("path");
 var createError = require("http-errors");
-const express = require('express');
-const bodyParser = require('body-parser');
-const cors = require('cors');
-const helmet = require('helmet');
-const morgan = require('morgan');
+const express = require("express");
+const bodyParser = require("body-parser");
+const cors = require("cors");
+const helmet = require("helmet");
+const morgan = require("morgan");
 
 // register routes
-var indexRouter = require("./routes/index");
-var userRouter = require("./routes/user");
+const indexRouter = require("./routes/index");
+const userRouter = require("./routes/user");
+const patientRouter = require("./routes/patient");
+const doctorRouter = require("./routes/doctor");
+const lookupRouter = require("./routes/lookup");
+const reservationRouter = require("./routes/reservation");
 
 // defining the Express app
 const app = express();
 
 // db connection
-require('./models');
+require("./models");
 
 // adding Helmet to enhance your Rest API's security
 app.use(helmet());
@@ -39,6 +43,10 @@ app.use(express.urlencoded({ extended: false }));
 
 app.use("/", indexRouter);
 app.use("/user", userRouter);
+app.use("/doctor", doctorRouter);
+app.use("/patient", patientRouter);
+app.use("/reservation", reservationRouter);
+app.use("/lookup", lookupRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
@@ -56,7 +64,6 @@ app.use(function (err, req, res, next) {
   res.render("error");
 });
 
-
 // path for images
 app.get("/file/:filename", (req, res) => {
   res.sendFile(path.join(__dirname, `./public/uploads/${req.params.filename}`));
@@ -64,7 +71,7 @@ app.get("/file/:filename", (req, res) => {
 
 // not-found route
 app.use((req, res, next) => {
-  res.status(404).sendFile(path.join(__dirname, './views', '404.html'))
+  res.status(404).sendFile(path.join(__dirname, "./views", "404.html"));
 });
 
 // starting the server
