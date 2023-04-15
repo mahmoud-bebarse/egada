@@ -5,8 +5,8 @@ const { verifyToken } = require("../middlewares/auth.js");
 
 const router = express.Router();
 
-router.get("/depts", lookupController.getDepts)
+router.get("/depts", lookupController.getDepts);
+router.post("/dept", lookupController.postDepts);
+router.delete("/dept", lookupController.deleteDept);
 
-router.post("/dept", lookupController.postDepts)
-
-module.exports = router; 
+module.exports = router;

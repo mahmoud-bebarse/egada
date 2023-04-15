@@ -23,7 +23,16 @@ const postDepts = async (req, res, next) => {
   res.status(200).send(Response("200", result, {}));
 };
 
+// delete
+const deleteDept = async (req, res, next) => {
+  const { id } = req.body;
+
+  const result = lookupService.deleteDept(id);
+  res.status(200).send(Response("200", result, {}));
+};
+
 module.exports = {
   getDepts,
   postDepts,
+  deleteDept,
 };
