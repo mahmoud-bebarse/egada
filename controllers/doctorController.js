@@ -16,7 +16,7 @@ const getDoctorById = async (req, res, next) => {
   }
 
   try {
-    const doctor = await doctorService.getDoctorById(id).populate("schedule");
+    const doctor = await doctorService.getDoctorById(id);
     res.status(200).send(Response("200", doctor, {}));
   } catch (err) {
     res.status(500).send(Response("500", {}, { message: err.message }));
