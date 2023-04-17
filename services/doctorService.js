@@ -49,7 +49,7 @@ const addDoctorsSchedules = async (doctorId, schedules) => {
 
   const doctor = await _Doctor.findByIdAndUpdate(doctorId, {
     schedules: schedulesIds,
-  });
+  }).populate("schedules");
 
   return doctor;
 };

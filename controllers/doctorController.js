@@ -53,27 +53,25 @@ const putDoctorSchedules = async (req, res, next) => {
 };
 
 const verifyDoctorOtp = async (req, res, next) => {
-  const {mobile, otpCode} = req.body;
+  const { mobile, otpCode } = req.body;
 
   const doctor = await doctorService.getDoctorByMobile(mobile);
-  
+
   //verify otpCode
   const result = await verifyOtp(doctor, otpCode);
 
   return result;
-  
-}
+};
 
 const resendDoctoerOtp = async (req, res, next) => {
-  const {mobile} = req.body;
+  const { mobile } = req.body;
 
-  const doctor = await patientService.getPatientByMobile(mobile);
+  const doctor = await doctorService.getDoctorByMobile(mobile);
 
   const result = await resendOtp(doctor);
 
   return result;
-
-}
+};
 
 module.exports = {
   getDoctors,
@@ -81,5 +79,5 @@ module.exports = {
   putDoctorSchedules,
   getDoctorById,
   verifyDoctorOtp,
-  resendDoctoerOtp
+  resendDoctoerOtp,
 };
