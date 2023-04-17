@@ -60,14 +60,6 @@ const verifyDoctorOtp = async (req, res, next) => {
   const result = await verifyOtp(doctor, otpCode);
 
   return result;
-<<<<<<< HEAD
-};
-
-const resendDoctoerOtp = async (req, res, next) => {
-  const { mobile } = req.body;
-
-  const doctor = await doctorService.getDoctorByMobile(mobile);
-=======
   
 }
  
@@ -76,29 +68,17 @@ const resendDoctorOtp = async (req, res, next) => {
 
   const doctor = await doctorService.getDoctorByMobile(mobile);
   await resendOtp(doctor.otpId);
->>>>>>> 7bd8c59 (fix)
 
   res.status(200).send(Response("200", {}, {}));
 
-<<<<<<< HEAD
-  return result;
-};
-
-module.exports = {
-=======
 } 
 
 module.exports = { 
->>>>>>> 7bd8c59 (fix)
   getDoctors,
   postDoctor,
   putDoctorSchedules, 
   getDoctorById, 
   verifyDoctorOtp,
-<<<<<<< HEAD
-  resendDoctoerOtp,
-=======
   resendDoctorOtp
->>>>>>> 7bd8c59 (fix)
 };
  
