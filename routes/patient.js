@@ -6,9 +6,11 @@ const { verifyToken } = require("../middlewares/auth.js");
 const router = express.Router();
 
 router.get("/all", patientController.getPatients);
+router.get("/:id", patientController.getPatientById);
+router.get("/reservations/:id", patientController.getRservations);
 router.post("/", patientController.postPatient);
 router.delete("/:id", patientController.deletePatient);
-router.get("/verifyOtp", patientController.verifyPatientOtp)
-router.get("/resendOtp", patientController.resendPatientOtp)
+router.get("/verifyOtp", patientController.verifyPatientOtp);
+router.get("/resendOtp", patientController.resendPatientOtp);
 
 module.exports = router;

@@ -13,7 +13,7 @@ const getDoctors = async () => {
 const getDoctorById = async (id) => {
   const doctor = await _Doctor
     .findOne({
-      $and: [{ id: id }, { status: true }],
+      $and: [{ _id: id }, { status: true }],
     })
     .populate("dept")
     .populate("schedules");

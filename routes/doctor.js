@@ -7,7 +7,7 @@ const router = express.Router();
 
 // doctor
 router.get("/all", doctorController.getDoctors);
-router.get("/", doctorController.getDoctorById);
+router.get("/:id", doctorController.getDoctorById);
 router.post("/", doctorController.postDoctor);
 router.put("/addSchedules/:id", doctorController.putDoctorSchedules);
 router.get("/verifyOtp", doctorController.verifyDoctorOtp);

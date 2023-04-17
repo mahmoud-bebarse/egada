@@ -1,6 +1,7 @@
 const { Response } = require("../models/response.js");
 const patientService = require("../services/patientService.js");
-const {verifyOtp, resendOtp} = require('../services/mobileAuthService.js')
+const reservationService = require("../services/reservationService.js");
+const { verifyOtp, resendOtp } = require("../services/mobileAuthService.js");
 
 // get patients
 const getPatients = async (req, res, next) => {
@@ -12,6 +13,31 @@ const getPatients = async (req, res, next) => {
   }
 };
 
+const getPatientById = async (req, res, next) => {
+  const { id } = req.params;
+  if (!id) {
+    res.status(404).send(Response("404", {}, { message: "missing params" }));
+  }
+
+  try {
+    const patient = await patientService.getPatientById(id);
+    res.status(200).send(Response("200", patient, {}));
+  } catch (err) {
+    res.status(500).send(Response("500", {}, { message: err.message }));
+  }
+};
+
+// get reservations by id
+const getRservations = async (req, res, next) => {
+  const { id } = req.params;
+  if (!id) res.status(404).send(Response("404", {}, { message: "some missing fields" }));
+  try {
+    const result = await reservationService.getReservationByPatientId(id);
+    res.status(200).send(Response("200", result, {}));
+  } catch (err) {
+    res.status(500).send(Response("500", {}, { message: err.message }));
+  }
+}
 // post patient
 const postPatient = async (req, res, next) => {
   const { name, mobile, dob } = req.body;
@@ -51,32 +77,32 @@ const deletePatient = async (req, res, next) => {
 };
 
 const verifyPatientOtp = async (req, res, next) => {
-  const {mobile, otpCode} = req.body;
+  const { mobile, otpCode } = req.body;
 
   const patient = await patientService.getPatientByMobile(mobile);
-  
+
   //verify otpCode
   const result = await verifyOtp(patient, otpCode);
 
   return result;
-  
-}
+};
 
 const resendPatientOtp = async (req, res, next) => {
-  const {mobile} = req.body;
+  const { mobile } = req.body;
 
   const patient = await patientService.getPatientByMobile(mobile);
 
   const result = await resendOtp(patient);
 
   return result;
-
-}
+};
 
 module.exports = {
   getPatients,
+  getPatientById,
+  getRservations,
   postPatient,
   deletePatient,
   verifyPatientOtp,
-  resendPatientOtp
+  resendPatientOtp,
 };

@@ -1,7 +1,7 @@
 const _Doctor = require("../models/doctor.js");
 const { Response } = require("../models/response.js");
 const doctorService = require("../services/doctorService.js");
-const {verifyOtp, resendOtp} = require("../services/mobileAuthService.js")
+const { verifyOtp, resendOtp } = require("../services/mobileAuthService.js");
 
 // get doctors
 const getDoctors = async (req, res, next) => {
@@ -11,13 +11,13 @@ const getDoctors = async (req, res, next) => {
 
 // get doctor by id
 const getDoctorById = async (req, res, next) => {
-  const { id } = req.body;
+  const { id } = req.params;
   if (!id) {
     res.status(404).send(Response("404", {}, { message: "missing params" }));
   }
 
   try {
-    const doctor = await doctorService.getDoctorById(id);
+    const doctor = await doctorService.getDoctorById(id); 
     res.status(200).send(Response("200", doctor, {}));
   } catch (err) {
     res.status(500).send(Response("500", {}, { message: err.message }));
