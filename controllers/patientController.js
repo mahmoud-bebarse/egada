@@ -1,6 +1,6 @@
-const _Patient = require("../models/patient.js");
 const { Response } = require("../models/response.js");
 const patientService = require("../services/patientService.js");
+const {verifyOtp, resendOtp} = require('../services/mobileAuthService.js')
 
 // get patients
 const getPatients = async (req, res, next) => {
@@ -50,8 +50,33 @@ const deletePatient = async (req, res, next) => {
   }
 };
 
+const verifyPatientOtp = async (req, res, next) => {
+  const {mobile, otpCode} = req.body;
+
+  const patient = await patientService.getPatientByMobile(mobile);
+  
+  //verify otpCode
+  const result = await verifyOtp(patient, otpCode);
+
+  return result;
+  
+}
+
+const resendPatientOtp = async (req, res, next) => {
+  const {mobile} = req.body;
+
+  const patient = await patientService.getPatientByMobile(mobile);
+
+  const result = await resendOtp(patient);
+
+  return result;
+
+}
+
 module.exports = {
   getPatients,
   postPatient,
   deletePatient,
+  verifyPatientOtp,
+  resendPatientOtp
 };

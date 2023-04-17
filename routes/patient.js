@@ -8,5 +8,7 @@ const router = express.Router();
 router.get("/all", patientController.getPatients);
 router.post("/", patientController.postPatient);
 router.delete("/:id", patientController.deletePatient);
+router.get("/verifyOtp", patientController.verifyPatientOtp)
+router.get("/resendOtp", patientController.resendPatientOtp)
 
 module.exports = router;

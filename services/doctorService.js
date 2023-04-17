@@ -1,5 +1,6 @@
 const _Doctor = require("../models/doctor.js");
 const _Schedules = require("../models/schedule.js");
+const {generateOtp} = require("../services/mobileAuthService.js");
 
 const getDoctors = async () => {
   const doctors = await _Doctor
@@ -29,6 +30,8 @@ const postDoctor = async (name, mobile, dept, schedules) => {
   });
 
   const res = await doctor.save();
+
+  generateOtp(mobile, doctor)
   return res;
 };
 
@@ -51,10 +54,20 @@ const addDoctorsSchedules = async (doctorId, schedules) => {
   return doctor;
 };
 
+const getDoctorByMobile = async (mobile) => {
+  const doctor = await _Doctor.find({$and:[
+    {mobile: mobile},
+    {status: true}
+  ]})
+
+  return doctor
+}
+
 module.exports = {
   getDoctors,
   getDoctorById,
   postDoctor,
   getDoctorsByDept,
   addDoctorsSchedules,
+  getDoctorByMobile
 };
