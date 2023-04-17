@@ -1,4 +1,3 @@
-const _Doctor = require("../models/doctor.js");
 const { Response } = require("../models/response.js");
 const doctorService = require("../services/doctorService.js");
 const { verifyOtp, resendOtp } = require("../services/mobileAuthService.js");
@@ -28,7 +27,7 @@ const getDoctorById = async (req, res, next) => {
 const postDoctor = async (req, res, next) => {
   const { name, mobile, dept, schedules } = req.body;
   // validation
-  if (!name && !mobile && !dept && !schedules) {
+  if (!name && !mobile && !dept) {
     res
       .status(404)
       .send(Response("404", {}, { message: "some missing fields" }));
@@ -61,23 +60,45 @@ const verifyDoctorOtp = async (req, res, next) => {
   const result = await verifyOtp(doctor, otpCode);
 
   return result;
+<<<<<<< HEAD
 };
 
 const resendDoctoerOtp = async (req, res, next) => {
   const { mobile } = req.body;
 
   const doctor = await doctorService.getDoctorByMobile(mobile);
+=======
+  
+}
+ 
+const resendDoctorOtp = async (req, res, next) => {
+  const {mobile} = req.body;
 
-  const result = await resendOtp(doctor);
+  const doctor = await doctorService.getDoctorByMobile(mobile);
+  await resendOtp(doctor.otpId);
+>>>>>>> 7bd8c59 (fix)
 
+  res.status(200).send(Response("200", {}, {}));
+
+<<<<<<< HEAD
   return result;
 };
 
 module.exports = {
+=======
+} 
+
+module.exports = { 
+>>>>>>> 7bd8c59 (fix)
   getDoctors,
   postDoctor,
-  putDoctorSchedules,
-  getDoctorById,
+  putDoctorSchedules, 
+  getDoctorById, 
   verifyDoctorOtp,
+<<<<<<< HEAD
   resendDoctoerOtp,
+=======
+  resendDoctorOtp
+>>>>>>> 7bd8c59 (fix)
 };
+ 

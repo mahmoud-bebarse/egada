@@ -84,18 +84,30 @@ const verifyPatientOtp = async (req, res, next) => {
   //verify otpCode
   const result = await verifyOtp(patient, otpCode);
 
+<<<<<<< HEAD
   return result;
 };
+=======
+  res.status(200).send(Response("200", result, {}));
+  
+}
+>>>>>>> 7bd8c59 (fix)
 
 const resendPatientOtp = async (req, res, next) => {
   const { mobile } = req.body;
 
   const patient = await patientService.getPatientByMobile(mobile);
 
-  const result = await resendOtp(patient);
+  await resendOtp(patient);
 
+<<<<<<< HEAD
   return result;
 };
+=======
+  res.status(200).send(Response("200", {}, {}));  
+
+}
+>>>>>>> 7bd8c59 (fix)
 
 module.exports = {
   getPatients,

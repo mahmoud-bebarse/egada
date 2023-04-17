@@ -31,8 +31,13 @@ const postDoctor = async (name, mobile, dept, schedules) => {
 
   const res = await doctor.save();
 
-  generateOtp(mobile, doctor)
-  return res;
+  const result = await generateOtp(mobile, doctor)
+
+  doctor.otpId = result.data.otp_id;
+  console.log(result.data);
+  await doctor.save();
+
+  return doctor;
 };
 
 const getDoctorsByDept = async (deptId) => {
@@ -55,7 +60,7 @@ const addDoctorsSchedules = async (doctorId, schedules) => {
 };
 
 const getDoctorByMobile = async (mobile) => {
-  const doctor = await _Doctor.find({$and:[
+  const doctor = await _Doctor.findOne({$and:[
     {mobile: mobile},
     {status: true}
   ]})

@@ -1,6 +1,6 @@
 const _Doctor = require('../models/doctor');
 const _Patient = require('../models/patient');
-const axios = require("axios");
+const axios = require('axios');
 
   const validateMobile = (mobile) => {
     const options = {
@@ -59,7 +59,7 @@ const axios = require("axios");
       });
   };
   
-  const generateOtp = (mobile, entity) => {
+  const generateOtp = async (mobile) => {
     const data = {
       originator: "Egada",
       recipient: `+2${mobile}`,
@@ -81,18 +81,16 @@ const axios = require("axios");
       data: JSON.stringify(data),
     };
   
-    axios
+    return await axios
       .request(options)
-      .then(async function (response) {
-        entity.otpId = response.data.otpId;
-        await entity.save();
-      })
-      .catch(function (error) {
-        console.error(error);
-      });
+    
   };
   
-  const resendOtp = async (entity) => {
+  const resendOtp = async (otpId) => {
+
+    const data = {
+        otp_id: `${otpId}`
+    };
     const options = {
       method: "POST",
       url: "https://d7sms.p.rapidapi.com/verify/v1/otp/resend-otp",
@@ -103,9 +101,9 @@ const axios = require("axios");
         "X-RapidAPI-Key": "ad3d23ef5dmshcb7a398cd2ae4f5p1a3529jsn36a4ee3e7b79",
         "X-RapidAPI-Host": "d7sms.p.rapidapi.com",
       },
-      data: `{"otp_id":"${entity.otpId}"}`,
+      data: JSON.stringify(data), 
     };
-  
+   
     const res = await axios
       .request(options);
 
@@ -140,7 +138,7 @@ const axios = require("axios");
       method: "POST",
       url: "https://d7sms.p.rapidapi.com/verify/v1/otp/verify-otp",
       headers: {
-        "content-type": "application/json",
+        "content-type": "application/json", 
         Token:
           "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJhdXRoLWJhY2tlbmQ6YXBwIiwic3ViIjoiNGE1MGQ0NTgtNGIyYi00YmQ1LTk5ODktNGNkMmIyYTg4MmI5In0.pJ0aYchEjFokZ8vCgI9C_ZIpG9K2FZboD4dwuZezYVE",
         "X-RapidAPI-Key": "ad3d23ef5dmshcb7a398cd2ae4f5p1a3529jsn36a4ee3e7b79",

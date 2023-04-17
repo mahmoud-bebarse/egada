@@ -44,7 +44,7 @@ const deletePatient = async (id) => {
 };
 
 const getPatientByMobile = async (mobile) => {
-  const patient = await _Patient.find({$and:[
+  const patient = await _Patient.findOne({$and:[
     {mobile: mobile},
     {status: true}
   ]})

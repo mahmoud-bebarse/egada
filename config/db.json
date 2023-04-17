@@ -1,9 +1,9 @@
 {
     "development": {
-      "_USERNAME": "root",
-      "_PASSWORD": null,
-      "_DBNAME": "boilerplate",
-      "_INSTANCE": "127.0.0.1"
+      "_USERNAME": "admin",
+      "_PASSWORD": "1213ErpBars",
+      "_DBNAME": "ejada",
+      "_INSTANCE": "ejada.uvlfm7o"
     },
     "test": {
       "_USERNAME": "root",
