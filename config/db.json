@@ -12,7 +12,9 @@
       "_INSTANCE": "127.0.0.1"
     },
     "production": {
-      "use_env_variable":"DATABASE_URL",
-      "dialect": "mysql"
+      "_USERNAME": "admin",
+      "_PASSWORD": "1213ErpBars",
+      "_DBNAME": "ejada",
+      "_INSTANCE": "ejada.uvlfm7o"
     }
   } 
