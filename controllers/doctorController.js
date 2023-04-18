@@ -95,6 +95,26 @@ const doctorLogin = async (req, res, next) => {
     .send(Response("200", {}, { message: "Logged in successfully .. " }));
 };
 
+// delete doctor
+
+const deleteDoctor = async (req, res, next) => {
+  const { id } = req.params;
+
+  if (!id) {
+    res
+      .status(404)
+      .send(Response("404", {}, { message: "some missing fields" }));
+  }
+
+  // delete
+  try {
+    const result = await doctorService.deleteDoctor(id);
+    res.status(200).send(Response("200", result, {}));
+  } catch (err) {
+    res.status(500).send(Response("500", {}, { message: err.message }));
+  }
+};
+
 // put doctor schedules
 const putDoctorSchedules = async (req, res, next) => {
   const { id } = req.params;
@@ -134,6 +154,7 @@ module.exports = {
   getDoctors,
   postDoctor,
   doctorLogin,
+  deleteDoctor,
   putDoctorSchedules, 
   getDoctorById, 
   getRservations,

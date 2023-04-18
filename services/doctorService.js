@@ -40,6 +40,14 @@ const postDoctor = async (name, mobile, dept, schedules) => {
   return doctor;
 };
 
+const deleteDoctor = async (id) => {
+  const res = await _Doctor.findByIdAndUpdate(id, {
+    status: false,
+  });
+
+  return res;
+};
+
 const getDoctorsByDept = async (deptId) => {
   const doctors = await _Doctor.find({
     $and: [{ status: true }, { dept: deptId }],
@@ -72,6 +80,7 @@ module.exports = {
   getDoctors,
   getDoctorById,
   postDoctor,
+  deleteDoctor,
   getDoctorsByDept,
   addDoctorsSchedules,
   getDoctorByMobile

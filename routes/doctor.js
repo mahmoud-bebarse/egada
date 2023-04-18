@@ -11,6 +11,7 @@ router.get("/:id", doctorController.getDoctorById);
 router.get("/reservations/:id", doctorController.getRservations);
 router.post("/", doctorController.postDoctor);
 router.post("/logIn", doctorController.doctorLogin);
+router.put("/delete/:id", doctorController.deleteDoctor);
 router.put("/addSchedules/:id", doctorController.putDoctorSchedules);
 router.get("/verifyOtp", doctorController.verifyDoctorOtp)
 router.get("/resendOtp", doctorController.resendDoctorOtp)
