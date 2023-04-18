@@ -29,7 +29,7 @@ const postDoctor = async (name, mobile, dept, schedules) => {
     schedules,
   });
 
-  const res = await doctor.save();
+   await doctor.save();
 
   const result = await generateOtp(mobile)
 

@@ -27,12 +27,17 @@ const postPatient = async (name, mobile, dob) => {
     dob,
   });
 
-  const res = await patient.save();
+   await patient.save();
 
   // generate OTP and send it to verify mobile
-  generateOtp(mobile);
+  
+  const result = await generateOtp(mobile);
 
-  return res;
+  patient.otpId = result.data.otp_id;
+  console.log(result.data);
+  await patient.save();
+
+  return patient;
 };
 
 const deletePatient = async (id) => {
