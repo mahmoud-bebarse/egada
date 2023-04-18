@@ -32,6 +32,9 @@ app.use(bodyParser.json());
 app.use(cors());
 
 // view engine setup
+/**
+ * comment out the following lines if you don't want to use a view engine
+ */
 // app.set("views", path.join(__dirname, "views"));
 // app.set("view engine", "jade");
 
