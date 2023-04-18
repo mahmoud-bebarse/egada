@@ -40,6 +40,7 @@ const postPatient = async (name, mobile, dob) => {
   return patient;
 };
 
+
 const deletePatient = async (id) => {
   const res = await _Patient.findByIdAndUpdate(id, {
     status: false,

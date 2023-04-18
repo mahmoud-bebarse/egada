@@ -1,7 +1,8 @@
 const { Response } = require("../models/response.js");
 const patientService = require("../services/patientService.js");
+const doctorService = require("../services/doctorService.js")
 const reservationService = require("../services/reservationService.js");
-const { verifyOtp, resendOtp } = require("../services/mobileAuthService.js");
+const { verifyOtp, resendOtp, generateOtp } = require("../services/mobileAuthService.js");
 
 // get patients
 const getPatients = async (req, res, next) => {
@@ -41,12 +42,22 @@ const getRservations = async (req, res, next) => {
 // post patient
 const postPatient = async (req, res, next) => {
   const { name, mobile, dob } = req.body;
+
   // validation
   if (!name && !mobile && !dob) {
     res
-      .status(404)
-      .send(Response("404", {}, { message: "some missing fields" }));
+    .status(404)
+    .send(Response("404", {}, { message: "some missing fields" }));
   }
+  // checking if mobile already exists
+  const find = patientService.getPatientByMobile(mobile);
+  const found = doctorService.getDoctorByMobile(mobile);
+  if (find || found)
+    res
+      .status(400)
+      .send(
+        Response("400", {}, { message: "this mobile number already exists" })
+      );
 
   // post
   try {
@@ -57,6 +68,20 @@ const postPatient = async (req, res, next) => {
   }
 };
 
+// Log in 
+const patientLogin = async (req, res, next) => {
+  const { mobile } = req.body;
+  // validation
+  if (!mobile) res.status(404).send(Response("404", {}, { message: "missing fields" }));
+  const found = await patientService.getPatientByMobile(mobile);
+  if (!found) res.status(404).send(Response("404", {}, { message: "there is no patient with this mobile number" }));
+
+  //generating otp
+  const result = await generateOtp(mobile);
+  found.otpId = result.data.otp_id;
+  
+  res.status(200).send(Response("200", {}, { message: "Logged in successfully .. " }));
+}
 // delete patient
 const deletePatient = async (req, res, next) => {
   const { id } = req.params;
@@ -104,6 +129,7 @@ module.exports = {
   getPatientById,
   getRservations,
   postPatient,
+  patientLogin,
   deletePatient,
   verifyPatientOtp,
   resendPatientOtp,

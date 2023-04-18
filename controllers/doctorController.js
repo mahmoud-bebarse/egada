@@ -1,6 +1,7 @@
 const { Response } = require("../models/response.js");
 const doctorService = require("../services/doctorService.js");
-const { verifyOtp, resendOtp } = require("../services/mobileAuthService.js");
+const patientService = require("../services/patientService.js");
+const { verifyOtp, resendOtp,generateOtp } = require("../services/mobileAuthService.js");
 const reservationService = require("../services/reservationService.js")
 
 // get doctors
@@ -41,16 +42,57 @@ const getRservations = async (req, res, next) => {
 // post doctor
 const postDoctor = async (req, res, next) => {
   const { name, mobile, dept, schedules } = req.body;
+
   // validation
   if (!name && !mobile && !dept) {
     res
-      .status(404)
-      .send(Response("404", {}, { message: "some missing fields" }));
+    .status(404)
+    .send(Response("404", {}, { message: "some missing fields" }));
   }
+  // checking if mobile already exists
+  const find = patientService.getPatientByMobile(mobile);
+  const found = doctorService.getDoctorByMobile(mobile);
+  if (find || found)
+    res
+      .status(400)
+      .send(
+        Response("400", {}, { message: "this mobile number already exists" })
+      );
 
   // post
-  const result = await doctorService.postDoctor(name, mobile, dept, schedules);
-  res.status(200).send(Response("200", result, {}));
+  try {
+    const result = await doctorService.postDoctor(name, mobile, dept, schedules);
+    res.status(200).send(Response("200", result, {}));
+  } catch (err) {
+    res.status(500).send(Response("500", {}, { message: err.message }));
+  }
+};
+
+// Log in 
+const doctorLogin = async (req, res, next) => {
+  const { mobile } = req.body;
+  // validation
+  if (!mobile)
+    res.status(404).send(Response("404", {}, { message: "missing fields" }));
+  const found = await doctorService.getDoctorByMobile(mobile);
+  if (!found)
+    res
+      .status(404)
+      .send(
+        Response(
+          "404",
+          {},
+          { message: "there is no doctor with this mobile number" }
+        )
+      );
+
+  //generating otp
+  const result = await generateOtp(mobile);
+  found.otpId = result.data.otp_id;
+
+  res
+    .status(200)
+    .send(Response("200", {}, { message: "Logged in successfully .. " }));
 };
 
 // put doctor schedules
@@ -91,6 +133,7 @@ const resendDoctorOtp = async (req, res, next) => {
 module.exports = { 
   getDoctors,
   postDoctor,
+  doctorLogin,
   putDoctorSchedules, 
   getDoctorById, 
   getRservations,
