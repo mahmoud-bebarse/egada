@@ -30,7 +30,7 @@ const postPatient = async (name, mobile, dob) => {
   const res = await patient.save();
 
   // generate OTP and send it to verify mobile
-  generateOtp(mobile, patient);
+  generateOtp(mobile);
 
   return res;
 };
