@@ -9,6 +9,7 @@ router.get("/all", patientController.getPatients);
 router.get("/:id", patientController.getPatientById);
 router.get("/reservations/:id", patientController.getRservations);
 router.post("/", patientController.postPatient);
+router.post("/logIn", patientController.patientLogin);
 router.delete("/:id", patientController.deletePatient);
 router.get("/verifyOtp", patientController.verifyPatientOtp);
 router.get("/resendOtp", patientController.resendPatientOtp);
