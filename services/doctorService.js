@@ -31,7 +31,7 @@ const postDoctor = async (name, mobile, dept, schedules) => {
 
   const res = await doctor.save();
 
-  const result = await generateOtp(mobile, doctor)
+  const result = await generateOtp(mobile)
 
   doctor.otpId = result.data.otp_id;
   console.log(result.data);
