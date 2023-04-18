@@ -11,7 +11,7 @@ router.get("/reservations/:id", patientController.getRservations);
 router.post("/", patientController.postPatient);
 router.post("/logIn", patientController.patientLogin);
 router.delete("/delete/:id", patientController.deletePatient);
-router.get("/verifyOtp", patientController.verifyPatientOtp);
-router.get("/resendOtp", patientController.resendPatientOtp);
+router.post("/verifyOtp", patientController.verifyPatientOtp);
+router.post("/resendOtp", patientController.resendPatientOtp);
 
 module.exports = router;

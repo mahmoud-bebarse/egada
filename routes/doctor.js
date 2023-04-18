@@ -13,7 +13,7 @@ router.post("/", doctorController.postDoctor);
 router.post("/logIn", doctorController.doctorLogin);
 router.put("/delete/:id", doctorController.deleteDoctor);
 router.put("/addSchedules/:id", doctorController.putDoctorSchedules);
-router.get("/verifyOtp", doctorController.verifyDoctorOtp)
-router.get("/resendOtp", doctorController.resendDoctorOtp)
+router.post("/verifyOtp", doctorController.verifyDoctorOtp);
+router.post("/resendOtp", doctorController.resendDoctorOtp);
 
 module.exports = router;
