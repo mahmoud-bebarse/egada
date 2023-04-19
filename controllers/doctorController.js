@@ -1,8 +1,12 @@
 const { Response } = require("../models/response.js");
 const doctorService = require("../services/doctorService.js");
 const patientService = require("../services/patientService.js");
-const { verifyOtp, resendOtp,generateOtp } = require("../services/mobileAuthService.js");
-const reservationService = require("../services/reservationService.js")
+const {
+  verifyOtp,
+  resendOtp,
+  generateOtp,
+} = require("../services/mobileAuthService.js");
+const reservationService = require("../services/reservationService.js");
 
 // get doctors
 const getDoctors = async (req, res, next) => {
@@ -18,13 +22,13 @@ const getDoctorById = async (req, res, next) => {
   }
 
   try {
-    const doctor = await doctorService.getDoctorById(id); 
+    const doctor = await doctorService.getDoctorById(id);
     res.status(200).send(Response("200", doctor, {}));
   } catch (err) {
     res.status(500).send(Response("500", {}, { message: err.message }));
   }
 };
-// get reservations by doctor id 
+// get reservations by doctor id
 const getRservations = async (req, res, next) => {
   const { id } = req.params;
   if (!id)
@@ -41,19 +45,19 @@ const getRservations = async (req, res, next) => {
 
 // post doctor
 const postDoctor = async (req, res, next) => {
-  const { name, mobile, dept} = req.body;
+  const { name, mobile, dept } = req.body;
 
   // validation
   if (!name && !mobile && !dept) {
     res
-    .status(404)
-    .send(Response("404", {}, { message: "some missing fields" }));
+      .status(404)
+      .send(Response("404", {}, { message: "some missing fields" }));
   }
   // checking if mobile already exists
   const find = await patientService.getPatientByMobile(mobile);
-  const found = await doctorService.getDoctorByMobile(mobile); 
-  
-  if (find || found){
+  const found = await doctorService.getDoctorByMobile(mobile);
+
+  if (find || found) {
     res
       .status(400)
       .send(
@@ -64,14 +68,13 @@ const postDoctor = async (req, res, next) => {
     try {
       const result = await doctorService.postDoctor(name, mobile, dept);
       res.status(200).send(Response("200", result, {}));
-    } catch (err) { 
+    } catch (err) {
       res.status(500).send(Response("500", {}, { message: err.message }));
     }
   }
-
 };
 
-// Log in 
+// Log in
 const doctorLogin = async (req, res, next) => {
   const { mobile } = req.body;
   // validation
@@ -138,31 +141,37 @@ const verifyDoctorOtp = async (req, res, next) => {
   const doctor = await doctorService.getDoctorByMobile(mobile);
 
   //verify otpCode
-  const result = await verifyOtp(doctor.otpId, otpCode);
+  verifyOtp(doctor.otpId, otpCode).then((result) => {
+    if (result.data.status === "APPROVED") {
+      doctor.isVerified = true;
+      doctor.save();
 
-  return result;
-  
-}
- 
+      res
+        .status(200)
+        .send(Response("200", {}, { message: "verified successfully" }));
+    } else {
+      res.status(400).send(Response("400", {}, { message: "invalid otp" }));
+    }
+  });
+};
+
 const resendDoctorOtp = async (req, res, next) => {
-  const {mobile} = req.body;
+  const { mobile } = req.body;
 
   const doctor = await doctorService.getDoctorByMobile(mobile);
   await resendOtp(doctor.otpId);
 
   res.status(200).send(Response("200", {}, {}));
+};
 
-} 
-
-module.exports = { 
+module.exports = {
   getDoctors,
   postDoctor,
   doctorLogin,
   deleteDoctor,
-  putDoctorSchedules, 
-  getDoctorById, 
+  putDoctorSchedules,
+  getDoctorById,
   getRservations,
   verifyDoctorOtp,
-  resendDoctorOtp
+  resendDoctorOtp,
 };
- 
