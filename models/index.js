@@ -7,15 +7,6 @@ const config = require("../config/db.json")[env];
 
 const { _DBNAME, _PASSWORD, _USERNAME, _INSTANCE } = config;
 
-//MongoDB Connection
-// const db = mongoose
-//   .connect("mongodb://localhost:27017/db")
-//   .then(() => {
-//     console.log("Database connected");
-//   })
-//   .catch((err) => {
-//     console.log(err);
-//   });
 const db = mongoose.connect(
     `mongodb+srv://${_USERNAME}:${_PASSWORD}@${_INSTANCE}.mongodb.net/${_DBNAME}?w=majority`,
     {

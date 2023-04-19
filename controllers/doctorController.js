@@ -50,22 +50,25 @@ const postDoctor = async (req, res, next) => {
     .send(Response("404", {}, { message: "some missing fields" }));
   }
   // checking if mobile already exists
-  const find = patientService.getPatientByMobile(mobile);
-  const found = doctorService.getDoctorByMobile(mobile);
-  if (find || found)
+  const find = await patientService.getPatientByMobile(mobile);
+  const found = await doctorService.getDoctorByMobile(mobile); 
+  
+  if (find.id || found.id){
     res
       .status(400)
       .send(
         Response("400", {}, { message: "this mobile number already exists" })
       );
-
-  // post
-  try {
-    const result = await doctorService.postDoctor(name, mobile, dept, schedules);
-    res.status(200).send(Response("200", result, {}));
-  } catch (err) {
-    res.status(500).send(Response("500", {}, { message: err.message }));
+  } else {
+    // post
+    try {
+      const result = await doctorService.postDoctor(name, mobile, dept, schedules);
+      res.status(200).send(Response("200", result, {}));
+    } catch (err) { 
+      res.status(500).send(Response("500", {}, { message: err.message }));
+    }
   }
+
 };
 
 // Log in 
@@ -89,10 +92,11 @@ const doctorLogin = async (req, res, next) => {
   //generating otp
   const result = await generateOtp(mobile);
   found.otpId = result.data.otp_id;
+  found.save();
 
   res
     .status(200)
-    .send(Response("200", {}, { message: "Logged in successfully .. " }));
+    .send(Response("200", { message: "OTP sent successfully .. " }, {}));
 };
 
 // delete doctor
@@ -134,7 +138,7 @@ const verifyDoctorOtp = async (req, res, next) => {
   const doctor = await doctorService.getDoctorByMobile(mobile);
 
   //verify otpCode
-  const result = await verifyOtp(doctor, otpCode);
+  const result = await verifyOtp(doctor.otpId, otpCode);
 
   return result;
   

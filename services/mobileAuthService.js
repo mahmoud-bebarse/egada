@@ -91,6 +91,7 @@ const axios = require('axios');
     const data = {
         otp_id: `${otpId}`
     };
+
     const options = {
       method: "POST",
       url: "https://d7sms.p.rapidapi.com/verify/v1/otp/resend-otp",
@@ -133,7 +134,13 @@ const axios = require('axios');
     return res;
   };
   
-  const verifyOtp = async (entity, otpCode) => {
+  const verifyOtp = async (otpId, otpCode) => {
+
+    const data = {
+        otp_id: `${otpId}`,
+        otp_code: `${otpCode}`
+    };
+
     const options = {
       method: "POST",
       url: "https://d7sms.p.rapidapi.com/verify/v1/otp/verify-otp",
@@ -144,7 +151,7 @@ const axios = require('axios');
         "X-RapidAPI-Key": "ad3d23ef5dmshcb7a398cd2ae4f5p1a3529jsn36a4ee3e7b79",
         "X-RapidAPI-Host": "d7sms.p.rapidapi.com",
       },
-      data: `{"otp_id":"${entity.otpId}","otp_code":"${otpCode}"}`,
+      data: JSON.stringify(data)
     };
   
     const res = await axios
