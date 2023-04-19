@@ -21,12 +21,11 @@ const getDoctorById = async (id) => {
   return doctor;
 };
 
-const postDoctor = async (name, mobile, dept, schedules) => {
+const postDoctor = async (name, mobile, dept) => {
   const doctor = new _Doctor({
     name,
     mobile,
     dept,
-    schedules,
   });
 
    await doctor.save();

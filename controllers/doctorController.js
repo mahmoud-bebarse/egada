@@ -41,7 +41,7 @@ const getRservations = async (req, res, next) => {
 
 // post doctor
 const postDoctor = async (req, res, next) => {
-  const { name, mobile, dept, schedules } = req.body;
+  const { name, mobile, dept} = req.body;
 
   // validation
   if (!name && !mobile && !dept) {
@@ -53,7 +53,7 @@ const postDoctor = async (req, res, next) => {
   const find = await patientService.getPatientByMobile(mobile);
   const found = await doctorService.getDoctorByMobile(mobile); 
   
-  if (find.id || found.id){
+  if (find || found){
     res
       .status(400)
       .send(
