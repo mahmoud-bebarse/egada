@@ -62,7 +62,7 @@ const postDoctor = async (req, res, next) => {
   } else {
     // post
     try {
-      const result = await doctorService.postDoctor(name, mobile, dept, schedules);
+      const result = await doctorService.postDoctor(name, mobile, dept);
       res.status(200).send(Response("200", result, {}));
     } catch (err) { 
       res.status(500).send(Response("500", {}, { message: err.message }));
