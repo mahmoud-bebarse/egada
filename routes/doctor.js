@@ -12,6 +12,7 @@ router.get("/reservations/:id", doctorController.getRservations);
 router.post("/", doctorController.postDoctor);
 router.post("/logIn", doctorController.doctorLogin);
 router.put("/delete/:id", doctorController.deleteDoctor);
+router.get("/schedules/:id", doctorController.getDoctorSchedules);
 router.put("/addSchedules/:id", doctorController.putDoctorSchedules);
 router.post("/verifyOtp", doctorController.verifyDoctorOtp);
 router.post("/resendOtp", doctorController.resendDoctorOtp);

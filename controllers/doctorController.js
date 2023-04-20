@@ -130,10 +130,20 @@ const putDoctorSchedules = async (req, res, next) => {
   try {
     const doctor = await doctorService.addDoctorsSchedules(id, schedules);
     res.status(200).send(Response("200", doctor, {}));
-  } catch {
+  } catch (err){
     res.status(500).send(Response("500", {}, { message: err.message }));
   }
 };
+
+const getDoctorSchedules = async (req, res, next) => {
+  const { id } = req.params;
+  try {
+    const schedules = await doctorService.getSchedulesByDoctorId(id);
+    res.status(200).send(Response("200",schedules , {}));
+  } catch (err) {
+    res.status(500).send(Response("500", {}, { message: err.message }));
+  }
+}
 
 const verifyDoctorOtp = async (req, res, next) => {
   const { mobile, otpCode } = req.body;
@@ -170,6 +180,7 @@ module.exports = {
   doctorLogin,
   deleteDoctor,
   putDoctorSchedules,
+  getDoctorSchedules,
   getDoctorById,
   getRservations,
   verifyDoctorOtp,

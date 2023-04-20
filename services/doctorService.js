@@ -71,7 +71,17 @@ const getDoctorByMobile = async (mobile) => {
     {status: true}
   ]})
 
-  return doctor
+  return doctor ;
+}
+
+const getSchedulesByDoctorId = async (id) => {
+ const schedules= await _Doctor.findOne({
+    $and: [{ _id: id }, { status: true }],
+  })
+    .select({ schedules: 1, _id: 0 })
+    .populate("schedules");
+  
+  return schedules ;
 }
 
 module.exports = {
@@ -81,5 +91,6 @@ module.exports = {
   deleteDoctor,
   getDoctorsByDept,
   addDoctorsSchedules,
+  getSchedulesByDoctorId,
   getDoctorByMobile
 };

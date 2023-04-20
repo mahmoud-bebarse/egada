@@ -5,7 +5,7 @@ const scheduleSchema = new mongoose.Schema({
   fromMin: { type: Number, required: true, default: 0 },
   toHr: { type: Number, required: true, default: 0 },
   toMin: { type: Number, required: true, default: 0 },
-  
+
   date: { type: Date, required: true, default: Date.now },
 
   status: { type: Boolean, default: true },

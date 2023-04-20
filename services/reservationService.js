@@ -34,7 +34,6 @@ const getReservationByPatientId = async (patientId) => {
   const reservations = await _Reservation
     .find({ patient: patientId })
     .populate("doctor");
-
   return reservations;
 };
 
