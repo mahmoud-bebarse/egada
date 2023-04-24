@@ -38,7 +38,7 @@ const getDoctorsByDept = async (req, res, next) => {
   } else {
     try {
       const doctors = await doctorService.getDoctorsByDept(id);
-      res.status(200).send(Response("200", doctors, {}));
+      res.status(200).send(Response("200", doctors, ''));
     } catch (err) {
       res.status(500).send(Response("500", {}, err.message ));
     }
