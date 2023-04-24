@@ -54,7 +54,7 @@ const postPatient = async (req, res, next) => {
   if (!name && !mobile && !dob) {
     res
       .status(404)
-      .send(Response("404", {}, { message: "some missing fields" }));
+      .send(Response("404", {},  "some missing fields" ));
   }
   // checking if mobile already exists
   const find = await patientService.getPatientByMobile(mobile);
@@ -63,15 +63,15 @@ const postPatient = async (req, res, next) => {
     res
       .status(400)
       .send(
-        Response("400", {}, { message: "this mobile number already exists" })
+        Response("400", {}, "this mobile number already exists" )
       );
   } else {
     // post
     try {
       const result = await patientService.postPatient(name, mobile, dob);
-      res.status(200).send(Response("200", result, {}));
+      res.status(200).send(Response("200", result, ''));
     } catch (err) {
-      res.status(500).send(Response("500", {}, { message: err.message }));
+      res.status(500).send(Response("500", {},  err.message ));
     }
   }
 };
@@ -81,7 +81,7 @@ const patientLogin = async (req, res, next) => {
   const { mobile } = req.body;
   // validation
   if (!mobile)
-    res.status(404).send(Response("404", {}, { message: "missing fields" }));
+    res.status(404).send(Response("404", {}, "missing fields" ));
   const found = await patientService.getPatientByMobile(mobile);
   if (!found)
     res
@@ -90,7 +90,7 @@ const patientLogin = async (req, res, next) => {
         Response(
           "404",
           {},
-          { message: "there is no patient with this mobile number" }
+           "there is no patient with this mobile number" 
         )
       );
 
@@ -101,7 +101,7 @@ const patientLogin = async (req, res, next) => {
 
   res
     .status(200)
-    .send(Response("200", { message: "OTP sent successfully .. " }, {}));
+    .send(Response("200",{}, "OTP sent successfully .. " ));
 };
 
 // delete patient
@@ -111,15 +111,15 @@ const deletePatient = async (req, res, next) => {
   if (!id) {
     res
       .status(404)
-      .send(Response("404", {}, { message: "some missing fields" }));
+      .send(Response("404", {},  "some missing fields" ));
   }
 
   // delete
   try {
     const result = await patientService.deletePatient(id);
-    res.status(200).send(Response("200", result, {}));
+    res.status(200).send(Response("200", result, ''));
   } catch (err) {
-    res.status(500).send(Response("500", {}, { message: err.message }));
+    res.status(500).send(Response("500", {}, err.message ));
   }
 };
 
@@ -136,9 +136,9 @@ const verifyPatientOtp = async (req, res, next) => {
 
       res
         .status(200)
-        .send(Response("200", {}, { message: "verified successfully" }));
+        .send(Response("200", {},  "verified successfully" ));
     } else {
-      res.status(400).send(Response("400", {}, { message: "invalid otp" }));
+      res.status(400).send(Response("400", {},  "invalid otp" ));
     }
   });
 };
@@ -150,7 +150,7 @@ const resendPatientOtp = async (req, res, next) => {
 
   await resendOtp(patient.otpId);
 
-  res.status(200).send(Response("200", {}, {}));
+  res.status(200).send(Response("200", {}, 'OTP resent successfully'));
 };
 
 module.exports = {

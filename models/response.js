@@ -1,8 +1,8 @@
-function Response(status = '', body = {}, error = {}) {
+function Response(status = '', body = {}, message = '') {
     return {
         status,
         body,
-        error
+        message
     }
 }
 

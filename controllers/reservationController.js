@@ -23,7 +23,7 @@ const postReservation = async (req, res, next) => {
       );
       var newPatientId = result._id;
     } catch (err) {
-      res.status(500).send(Response("500", {}, { message: err.message }));
+      res.status(500).send(Response("500", {}, err.message ));
     }
   }
 
@@ -46,9 +46,9 @@ const postReservation = async (req, res, next) => {
     await doctor.save();
 
     //send response
-    res.status(200).send(Response("200", reservation, {}));
+    res.status(200).send(Response("200", reservation, ''));
   } catch (err) {
-    res.status(500).send(Response("500", {}, { message: err.message }));
+    res.status(500).send(Response("500", {}, err.message ));
   }
 };
 
