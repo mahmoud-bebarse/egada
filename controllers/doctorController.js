@@ -28,6 +28,22 @@ const getDoctorById = async (req, res, next) => {
     res.status(500).send(Response("500", {}, { message: err.message }));
   }
 };
+
+// get doctor by dept id
+
+const getDoctorsByDept = async (req, res, next) => {
+  const { id } = req.params;
+  if (!id) {
+    res.status(404).send(Response("404", {}, { message: "missing params" }));
+  } else {
+    try {
+      const doctors = await doctorService.getDoctorsByDept(id);
+      res.status(200).send(Response("200", doctors, {}));
+    } catch (err) {
+      res.status(500).send(Response("500", {}, { message: err.message }));
+    }
+  }
+};
 // get reservations by doctor id
 const getRservations = async (req, res, next) => {
   const { id } = req.params;
@@ -130,7 +146,7 @@ const putDoctorSchedules = async (req, res, next) => {
   try {
     const doctor = await doctorService.addDoctorsSchedules(id, schedules);
     res.status(200).send(Response("200", doctor, {}));
-  } catch (err){
+  } catch (err) {
     res.status(500).send(Response("500", {}, { message: err.message }));
   }
 };
@@ -139,11 +155,11 @@ const getDoctorSchedules = async (req, res, next) => {
   const { id } = req.params;
   try {
     const schedules = await doctorService.getSchedulesByDoctorId(id);
-    res.status(200).send(Response("200",schedules , {}));
+    res.status(200).send(Response("200", schedules, {}));
   } catch (err) {
     res.status(500).send(Response("500", {}, { message: err.message }));
   }
-}
+};
 
 const verifyDoctorOtp = async (req, res, next) => {
   const { mobile, otpCode } = req.body;
@@ -182,6 +198,7 @@ module.exports = {
   putDoctorSchedules,
   getDoctorSchedules,
   getDoctorById,
+  getDoctorsByDept,
   getRservations,
   verifyDoctorOtp,
   resendDoctorOtp,

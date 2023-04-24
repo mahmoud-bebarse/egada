@@ -8,6 +8,7 @@ const router = express.Router();
 // doctor
 router.get("/all", doctorController.getDoctors);
 router.get("/:id", doctorController.getDoctorById);
+router.get("/dept/:id", doctorController.getDoctorsByDept);
 router.get("/reservations/:id", doctorController.getRservations);
 router.post("/", doctorController.postDoctor);
 router.post("/logIn", doctorController.doctorLogin);
