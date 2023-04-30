@@ -14,21 +14,21 @@ const getPatients = async (req, res, next) => {
     const patients = await patientService.getPatients();
     res.status(200).send(Response("200", patients, {}));
   } catch (err) {
-    res.status(500).send(Response("500", {}, { message: err.message }));
+    res.status(500).send(Response("500", {}, err.message ));
   }
 };
 
 const getPatientById = async (req, res, next) => {
   const { id } = req.params;
   if (!id) {
-    res.status(404).send(Response("404", {}, { message: "missing params" }));
+    res.status(404).send(Response("404", {},  "missing params" ));
   }
 
   try {
     const patient = await patientService.getPatientById(id);
-    res.status(200).send(Response("200", patient, {}));
+    res.status(200).send(Response("200", patient, ''));
   } catch (err) {
-    res.status(500).send(Response("500", {}, { message: err.message }));
+    res.status(500).send(Response("500", {},  err.message ));
   }
 };
 
@@ -38,12 +38,12 @@ const getRservations = async (req, res, next) => {
   if (!id)
     res
       .status(404)
-      .send(Response("404", {}, { message: "some missing fields" }));
+      .send(Response("404", {}, "some missing fields"));
   try {
     const result = await reservationService.getReservationByPatientId(id);
-    res.status(200).send(Response("200", result, {}));
+    res.status(200).send(Response("200", result, ""));
   } catch (err) {
-    res.status(500).send(Response("500", {}, { message: err.message }));
+    res.status(500).send(Response("500", {},  err.message ));
   }
 };
 // post patient

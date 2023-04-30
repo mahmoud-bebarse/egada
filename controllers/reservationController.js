@@ -52,6 +52,29 @@ const postReservation = async (req, res, next) => {
   }
 };
 
+// delete reservations by doctor id 
+const deleteReservations = async (req, res, next) => {
+  const { id } = req.params;
+  if (!id) res.status(404).send(Response("404", {}, "missing params"));
+  try {
+    await reservationService.deleteReservation(id);
+    res.status(200).send(Response("200", {}, 'reservations deleted successfully..'));
+  } catch (err) {
+    res.status(500).send(Response("500", {}, err.message));
+  }
+};
+
+//get all reservations 
+const getReservations = async (req, res, next) => {
+  try {
+    const result = await reservationService.getReservations();
+    res.status(200).send(Response("200", result , ''));
+  } catch (err) {
+    res.status(500).send(Response("500", {}, err.message));
+  }
+}
 module.exports = {
   postReservation,
+  deleteReservations,
+  getReservations
 };

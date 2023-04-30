@@ -131,8 +131,9 @@ const deleteDoctor = async (req, res, next) => {
 
   // delete
   try {
-    const result = await doctorService.deleteDoctor(id);
-    res.status(200).send(Response("200", result, ''));
+    await doctorService.deleteDoctor(id);
+    await reservationService.deleteReservation(id);
+    res.status(200).send(Response("200",{}, 'Doctor deleted successfully..'));
   } catch (err) {
     res.status(500).send(Response("500", {},  err.message ));
   }
