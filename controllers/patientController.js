@@ -146,7 +146,7 @@ const verifyPatientOtp = async (req, res, next) => {
 
       res
         .status(200)
-        .send(Response("200", {},  "verified successfully" ));
+        .send(Response("200", {patient},  "verified successfully" ));
     } else {
       res.status(400).send(Response("400", {},  "invalid otp" ));
     }
