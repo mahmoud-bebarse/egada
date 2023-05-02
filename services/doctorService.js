@@ -10,6 +10,10 @@ const getDoctors = async () => {
   return doctors;
 };
 
+const deleteAllDoctors = async () => {
+  const doctor = await _Doctor.find().deleteMany();
+  return doctor;
+};
 const getDoctorById = async (id) => {
   const doctor = await _Doctor
     .findOne({
@@ -21,11 +25,13 @@ const getDoctorById = async (id) => {
   return doctor;
 };
 
-const postDoctor = async (name, mobile, dept) => {
+const postDoctor = async (name, mobile, dept,address,fee) => {
   const doctor = new _Doctor({
     name,
     mobile,
     dept,
+    address,
+    fee
   });
 
    await doctor.save();
@@ -39,9 +45,7 @@ const postDoctor = async (name, mobile, dept) => {
 };
 
 const deleteDoctor = async (id) => {
-  const res = await _Doctor.findByIdAndUpdate(id, {
-    status: false,
-  });
+  const res = await _Doctor.findByIdAndDelete(id);
 
   return res;
 };
@@ -54,15 +58,17 @@ const getDoctorsByDept = async (deptId) => {
   return doctors;
 };
 
-const addDoctorsSchedules = async (doctorId, schedules) => {
-  const result = await _Schedules.insertMany(schedules);
-  const schedulesIds = result.map((a) => a._id);
-
-  const doctor = await _Doctor.findByIdAndUpdate(doctorId, {
-    schedules: schedulesIds,
-  }).populate("schedules");
-
-  return doctor;
+const addDoctorsSchedules = async (doctor,fromHr,fromMin,toHr,toMin,date) => {
+  const schedule = new _Schedules({
+    doctor,
+    fromHr,
+    fromMin,
+    toHr,
+    toMin,
+    date
+  })
+  const res = await schedule.save();
+  return res;
 };
 
 const getDoctorByMobile = async (mobile) => {
@@ -75,22 +81,25 @@ const getDoctorByMobile = async (mobile) => {
 }
 
 const getSchedulesByDoctorId = async (id) => {
- const schedules= await _Doctor.findOne({
-    $and: [{ _id: id }, { status: true }],
-  })
-    .select({ schedules: 1, _id: 0 })
-    .populate("schedules");
+  const schedules = await _Schedules.findOne({ doctor: id });
   
   return schedules ;
 }
 
+const deleteSchedules = async (id) => {
+  const schedule = await _Schedules.findOne({ doctor: id }).deleteMany();
+  return schedule;
+}
+
 module.exports = {
   getDoctors,
+  deleteAllDoctors,
   getDoctorById,
   postDoctor,
   deleteDoctor,
   getDoctorsByDept,
   addDoctorsSchedules,
   getSchedulesByDoctorId,
-  getDoctorByMobile
+  getDoctorByMobile,
+  deleteSchedules
 };

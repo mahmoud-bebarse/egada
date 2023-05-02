@@ -18,6 +18,15 @@ const getPatients = async (req, res, next) => {
   }
 };
 
+const deletePatients = async (req, res, next) => {
+  try {
+    await patientService.deleteAllPatients();
+    res.status(200).send(Response("200", {}, "all patients has been deleted successfully"));
+  } catch (err) {
+    res.status(500).send(Response("500", {}, err.message));
+  }
+};
+
 const getPatientById = async (req, res, next) => {
   const { id } = req.params;
   if (!id) {
@@ -116,8 +125,9 @@ const deletePatient = async (req, res, next) => {
 
   // delete
   try {
-    const result = await patientService.deletePatient(id);
-    res.status(200).send(Response("200", result, ''));
+    await patientService.deletePatient(id);
+    await reservationService.deleteReservationByPatientId(id);
+    res.status(200).send(Response("200",{}, 'Patient deleted succssefully..'));
   } catch (err) {
     res.status(500).send(Response("500", {}, err.message ));
   }
@@ -162,4 +172,5 @@ module.exports = {
   deletePatient,
   verifyPatientOtp,
   resendPatientOtp,
+  deletePatients
 };

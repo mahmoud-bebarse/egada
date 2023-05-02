@@ -3,13 +3,16 @@ const _Reservation = require("../models/reservation.js");
 const { generateOtp } = require('../services/mobileAuthService.js')
 
 const getPatients = async () => {
-  const patient = await _Patient.find({ status: true }).populate({
+  const patient = await _Patient.find({status : true}).populate({
     path: "reservations",
     populate: "doctor",
   });
   return patient;
 };
-
+const deleteAllPatients = async () => {
+  const patient = await _Patient.find().deleteMany();
+  return patient;
+};
 const getPatientById = async (id) => {
   const patient = _Patient
     .findOne({ $and: [{ _id: id }, { status: true }] })
@@ -42,9 +45,7 @@ const postPatient = async (name, mobile, dob) => {
 
 
 const deletePatient = async (id) => {
-  const res = await _Patient.findByIdAndUpdate(id, {
-    status: false,
-  });
+  const res = await _Patient.findByIdAndDelete(id);
 
   return res;
 };
@@ -60,6 +61,7 @@ const getPatientByMobile = async (mobile) => {
 
 module.exports = {
   getPatients,
+  deleteAllPatients,
   postPatient,
   deletePatient,
   getPatientById,

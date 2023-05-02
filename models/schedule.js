@@ -1,6 +1,10 @@
 const mongoose = require("mongoose");
 
 const scheduleSchema = new mongoose.Schema({
+  doctor: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "doctor",
+  },
   fromHr: { type: Number, required: true, default: 0 },
   fromMin: { type: Number, required: true, default: 0 },
   toHr: { type: Number, required: true, default: 0 },
