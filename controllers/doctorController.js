@@ -90,7 +90,7 @@ const postDoctor = async (req, res, next) => {
     // post
     try {
       const result = await doctorService.postDoctor(name, mobile, dept,address,fee);
-      res.status(200).send(Response("200", result, ""));
+      res.status(200).send(Response("200", {result}, "OTP sent successfully"));
     } catch (err) {
       res.status(500).send(Response("500", {}, err.message));
     }
@@ -106,14 +106,14 @@ const doctorLogin = async (req, res, next) => {
   if (!found)
     res
       .status(404)
-      .send(Response("404", {}, "there is no doctor with this mobile number"));
+      .send(Response("404", {} , "there is no doctor with this mobile number"));
 
   //generating otp
   const result = await generateOtp(mobile);
   found.otpId = result.data.otp_id;
   found.save();
 
-  res.status(200).send(Response("200", {}, "OTP sent successfully .. "));
+  res.status(200).send(Response("200",found._id , "OTP sent successfully .. "));
 };
 
 // delete doctor

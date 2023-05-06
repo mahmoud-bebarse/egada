@@ -78,7 +78,7 @@ const postPatient = async (req, res, next) => {
     // post
     try {
       const result = await patientService.postPatient(name, mobile, dob);
-      res.status(200).send(Response("200", result, ''));
+      res.status(200).send(Response("200", result, 'OTP sent seccessfully'));
     } catch (err) {
       res.status(500).send(Response("500", {},  err.message ));
     }
@@ -110,7 +110,7 @@ const patientLogin = async (req, res, next) => {
 
   res
     .status(200)
-    .send(Response("200",{}, "OTP sent successfully .. " ));
+    .send(Response("200",found._id, "OTP sent successfully .. " ));
 };
 
 // delete patient
