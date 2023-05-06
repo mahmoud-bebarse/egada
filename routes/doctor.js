@@ -19,5 +19,6 @@ router.get("/schedules/:id", doctorController.getDoctorSchedules);
 router.post("/addSchedules/:id", doctorController.postDoctorSchedules);
 router.post("/verifyOtp", doctorController.verifyDoctorOtp);
 router.post("/resendOtp", doctorController.resendDoctorOtp);
+router.put("/:doctorId/schedules/:id", doctorController.putSchedules);
 
 module.exports = router;

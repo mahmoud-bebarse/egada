@@ -58,18 +58,19 @@ const getDoctorsByDept = async (deptId) => {
   return doctors;
 };
 
-const addDoctorsSchedules = async (doctor,fromHr,fromMin,toHr,toMin,date) => {
+const addDoctorsSchedules = async (doctor,fromHr,fromMin,toHr,toMin,day) => {
   const schedule = new _Schedules({
     doctor,
     fromHr,
     fromMin,
     toHr,
     toMin,
-    date
-  })
+    day,
+  });
   const res = await schedule.save();
   return res;
 };
+
 
 const getDoctorByMobile = async (mobile) => {
   const doctor = await _Doctor.findOne({$and:[
@@ -81,7 +82,7 @@ const getDoctorByMobile = async (mobile) => {
 }
 
 const getSchedulesByDoctorId = async (id) => {
-  const schedules = await _Schedules.findOne({ doctor: id });
+  const schedules = await _Schedules.find({ doctor: id });
   
   return schedules ;
 }
@@ -101,5 +102,5 @@ module.exports = {
   addDoctorsSchedules,
   getSchedulesByDoctorId,
   getDoctorByMobile,
-  deleteSchedules
+  deleteSchedules,
 };

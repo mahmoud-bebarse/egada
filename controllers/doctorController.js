@@ -7,6 +7,9 @@ const {
   generateOtp,
 } = require("../services/mobileAuthService.js");
 const reservationService = require("../services/reservationService.js");
+const _Schedules = require("../models/schedule.js");
+
+
 
 // get doctors
 const getDoctors = async (req, res, next) => {
@@ -133,13 +136,14 @@ const deleteDoctor = async (req, res, next) => {
   }
 };
 
-// put doctor schedules
+// post doctor schedules
 const postDoctorSchedules = async (req, res, next) => {
   const { id } = req.params;
-  const { fromHr, fromMin, toHr, toMin, date } = req.body;
-  if (!fromHr || !fromMin || !toHr || !toMin || !date) {
-    res.status(404).send(Response("404", {}, "missing data"));
-  } else {
+  const { fromHr,fromMin,toHr,toMin, day } = req.body;
+  if (!fromHr || !toHr ) {
+    res.status(404).send(Response("404", {}, "missing fields"));
+  } else
+  {
     try {
       const schedule = await doctorService.addDoctorsSchedules(
         id,
@@ -147,7 +151,7 @@ const postDoctorSchedules = async (req, res, next) => {
         fromMin,
         toHr,
         toMin,
-        date
+        day
       );
       await schedule.save();
       const doctor = await doctorService.getDoctorById(id);
@@ -158,6 +162,20 @@ const postDoctorSchedules = async (req, res, next) => {
     } catch (err) {
       res.status(500).send(Response("500", {}, err.message));
     }
+  }
+  
+};
+
+const putSchedules = async (req, res, next) => {
+  const { doctorId, id } = req.params;
+  const { fromHr, fromMin, toHr, toMin, day } = req.body;
+  if (!doctorId || !id) res.status(404).send(Response("404", {}, "missing params"));
+  try {
+    const schedule = await _Schedules.findOneAndUpdate({ doctor: doctorId, _id: id },{fromHr,fromMin,toHr,toMin,day});
+    schedule.save();
+    res.status(200).send(Response("200", schedule, ""));
+  } catch (err) {
+    res.status(500).send(Response("500", {}, err.message));
   }
 };
 
@@ -228,4 +246,5 @@ module.exports = {
   resendDoctorOtp,
   deleteDoctors,
   deleteSchedules,
+  putSchedules,
 };
