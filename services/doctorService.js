@@ -53,7 +53,7 @@ const deleteDoctor = async (id) => {
 const getDoctorsByDept = async (deptId) => {
   const doctors = await _Doctor.find({
     $and: [{ status: true }, { dept: deptId }],
-  });
+  }).populate({path:"dept", select:{name:1 , _id:0}});
 
   return doctors;
 };
