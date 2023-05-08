@@ -9,7 +9,7 @@ const postReservation = async (req, res, next) => {
     patientId,
     doctorId,
     scheduleId,
-    date,
+    dateTime,
     patientName,
     patientMobile,
     patientDob,
@@ -24,43 +24,48 @@ const postReservation = async (req, res, next) => {
       );
       var newPatientId = result._id;
     } catch (err) {
-      res.status(500).send(Response("500", {}, err.message ));
+      res.status(500).send(Response("500", {}, err.message));
     }
   }
-  if(!doctorId || !scheduleId || !date) res.status(404).send(Response("404", {}, "missing data"));
-  try {
-    const reservation = await reservationService.postReservation(
-      patientId || newPatientId,
-      doctorId,
-      scheduleId,
-      date
-    );
+  if (!doctorId || !scheduleId || !dateTime) {
+    res.status(404).send(Response("404", {}, "missing data"));
+  } else {
+    try {
+      const reservation = await reservationService.postReservation(
+        patientId || newPatientId,
+        doctorId,
+        scheduleId,
+        dateTime
+      );
 
-    // update patient reservations array
-    const patient = await patientService.getPatientById(
-      patientId || newPatientId
-    );
-    patient.reservations.push(reservation.id);
-    await patient.save();
-    // update doctor reservations array
-    const doctor = await doctorService.getDoctorById(doctorId);
-    doctor.reservations.push(reservation.id);
-    await doctor.save();
+      // update patient reservations array
+      const patient = await patientService.getPatientById(
+        patientId || newPatientId
+      );
+      patient.reservations.push(reservation.id);
+      await patient.save();
+      // update doctor reservations array
+      const doctor = await doctorService.getDoctorById(doctorId);
+      doctor.reservations.push(reservation.id);
+      await doctor.save();
 
-    //send response
-    res.status(200).send(Response("200", reservation, ''));
-  } catch (err) {
-    res.status(500).send(Response("500", {}, err.message ));
+      //send response
+      res.status(200).send(Response("200", reservation, ""));
+    } catch (err) {
+      res.status(500).send(Response("500", {}, err.message));
+    }
   }
 };
 
-// delete reservations by doctor id 
+// delete reservations by doctor id
 const deleteReservations = async (req, res, next) => {
   const { id } = req.params;
   if (!id) res.status(404).send(Response("404", {}, "missing params"));
   try {
     await reservationService.deleteReservationByDoctorId(id);
-    res.status(200).send(Response("200", {}, 'reservations deleted successfully..'));
+    res
+      .status(200)
+      .send(Response("200", {}, "reservations deleted successfully.."));
   } catch (err) {
     res.status(500).send(Response("500", {}, err.message));
   }
@@ -69,24 +74,26 @@ const deleteReservations = async (req, res, next) => {
 const deleteReservationsAll = async (req, res, next) => {
   try {
     await reservationService.deleteAllReservations();
-    res.status(200).send(Response("200", {}, 'reservations deleted successfully..'));
+    res
+      .status(200)
+      .send(Response("200", {}, "reservations deleted successfully.."));
   } catch (err) {
     res.status(500).send(Response("500", {}, err.message));
   }
 };
 
-//get all reservations 
+//get all reservations
 const getReservations = async (req, res, next) => {
   try {
     const result = await reservationService.getReservations();
-    res.status(200).send(Response("200", result , ''));
+    res.status(200).send(Response("200", result, ""));
   } catch (err) {
     res.status(500).send(Response("500", {}, err.message));
   }
-}
+};
 module.exports = {
   postReservation,
   deleteReservations,
   getReservations,
-  deleteReservationsAll
+  deleteReservationsAll,
 };

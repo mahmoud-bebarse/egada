@@ -42,7 +42,7 @@ const getReservationByPatientId = async (patientId) => {
 };
 
 // post
-const postReservation = async (patientId, doctorId, scheduleId, date) => {
+const postReservation = async (patientId, doctorId, scheduleId, dateTime) => {
   console.log("patient", patientId);
   console.log("doctor", doctorId);
   console.log("schedule", scheduleId);
@@ -50,7 +50,7 @@ const postReservation = async (patientId, doctorId, scheduleId, date) => {
     patient: patientId,
     doctor: doctorId,
     schedule: scheduleId,
-    date : date
+    date : dateTime
   });
 
   const res = await reservation.save();
@@ -59,7 +59,7 @@ const postReservation = async (patientId, doctorId, scheduleId, date) => {
 
 // delete reservation
 const deleteReservationByDoctorId  = async (doctorId) => {
-  const res = _Reservation.find({ doctor: doctorId }).deleteMany();
+  const res = await _Reservation.find({ doctor: doctorId }).deleteMany();
   return res;
 };
 

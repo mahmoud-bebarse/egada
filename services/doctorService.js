@@ -88,7 +88,7 @@ const getSchedulesByDoctorId = async (id) => {
 }
 
 const deleteSchedules = async (id) => {
-  const schedule = await _Schedules.findOne({ doctor: id }).deleteMany();
+  const schedule = await _Schedules.find({ doctor: id }).deleteMany();
   return schedule;
 }
 
