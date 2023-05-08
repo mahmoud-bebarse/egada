@@ -42,7 +42,7 @@ const getReservationByPatientId = async (patientId) => {
 };
 
 // post
-const postReservation = async (patientId, doctorId, scheduleId) => {
+const postReservation = async (patientId, doctorId, scheduleId, date) => {
   console.log("patient", patientId);
   console.log("doctor", doctorId);
   console.log("schedule", scheduleId);
@@ -50,6 +50,7 @@ const postReservation = async (patientId, doctorId, scheduleId) => {
     patient: patientId,
     doctor: doctorId,
     schedule: scheduleId,
+    date : date
   });
 
   const res = await reservation.save();

@@ -9,6 +9,7 @@ const postReservation = async (req, res, next) => {
     patientId,
     doctorId,
     scheduleId,
+    date,
     patientName,
     patientMobile,
     patientDob,
@@ -26,12 +27,13 @@ const postReservation = async (req, res, next) => {
       res.status(500).send(Response("500", {}, err.message ));
     }
   }
-  if(!doctorId || !scheduleId) res.status(404).send(Response("404", {}, "missing data"));
+  if(!doctorId || !scheduleId || !date) res.status(404).send(Response("404", {}, "missing data"));
   try {
     const reservation = await reservationService.postReservation(
       patientId || newPatientId,
       doctorId,
-      scheduleId
+      scheduleId,
+      date
     );
 
     // update patient reservations array
