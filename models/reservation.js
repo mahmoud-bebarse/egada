@@ -12,8 +12,9 @@ const reservationSchema = new mongoose.Schema({
     ref: "schedule",
     required: true,
   },
-  date: { type: Date, default: Date.now },
-  status: { type: Boolean, default: true },
+  date: { type: Date, default: Date.now , required: true},
+  done: { type: Boolean, default: false },
+  cancelled: { type: Boolean, default: false },
   entryDate: { type: Date, default: Date.now },
 });
 const Reservation = mongoose.model("reservation", reservationSchema);

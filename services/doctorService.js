@@ -5,7 +5,7 @@ const {generateOtp} = require("../services/mobileAuthService.js");
 const getDoctors = async () => {
   const doctors = await _Doctor
     .find({ status: true })
-    .select({ reservations: 0 })
+    
     .populate("dept")
     .populate("schedules");
   return doctors;

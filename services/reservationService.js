@@ -2,7 +2,7 @@ const _Reservation = require("../models/reservation");
 
 // get all
 const getReservations = async () => {
-  const reservations = await _Reservation.find({ status: true });
+  const reservations = await _Reservation.find({ done: false , cancelled: false });
 
   return reservations;
 };
@@ -10,7 +10,7 @@ const getReservations = async () => {
 // get by id
 const getReservationById = async (id) => {
   const reservation = await _Reservation
-    .findById(id, { status: true })
+    .findById(id, { done : false , cancelled: false})
     .populate("patient")
     .populate("doctor");
 
@@ -22,7 +22,8 @@ const getReservationByDoctorId = async (doctorId) => {
   const reservations = await _Reservation
     .find({
       doctor: doctorId,
-      status: true,
+      done: false,
+      cancelled: false
     })
     .select({ doctor: 0 })
     .populate("schedule")
@@ -33,7 +34,21 @@ const getDoneReservationByDoctorId = async (doctorId) => {
   const reservations = await _Reservation
     .find({
       doctor: doctorId,
-      status: false,
+      done: true,
+      cancelled: false
+    })
+    .select({ doctor: 0 })
+    .populate("schedule")
+    .populate({ path: "patient", select: { name: 1, dob: 1, _id: 0 } });
+  return reservations;
+};
+
+const getCancelledReservationByDoctorId = async (doctorId) => {
+  const reservations = await _Reservation
+    .find({
+      doctor: doctorId,
+      done: false,
+      cancelled: true
     })
     .select({ doctor: 0 })
     .populate("schedule")
@@ -44,7 +59,7 @@ const getDoneReservationByDoctorId = async (doctorId) => {
 // get by patientId
 const getReservationByPatientId = async (patientId) => {
   const reservations = await _Reservation
-    .find({ patient: patientId, status: true })
+    .find({ patient: patientId, done : false , cancelled: false})
     .select({ patient: 0 })
     .populate("schedule")
     .populate({
@@ -56,7 +71,20 @@ const getReservationByPatientId = async (patientId) => {
 };
 const getDoneReservationByPatientId = async (patientId) => {
   const reservations = await _Reservation
-    .find({ patient: patientId, status: false })
+    .find({ patient: patientId, done: true, cancelled : false })
+    .select({ patient: 0 })
+    .populate("schedule")
+    .populate({
+      path: "doctor",
+      populate: "dept",
+      select: { name: 1, dept: 1 },
+    });
+  return reservations;
+};
+
+const getCancelledReservationByPatientId = async (patientId) => {
+  const reservations = await _Reservation
+    .find({ patient: patientId, done: false, cancelled : true })
     .select({ patient: 0 })
     .populate("schedule")
     .populate({
@@ -69,9 +97,7 @@ const getDoneReservationByPatientId = async (patientId) => {
 
 // post
 const postReservation = async (patientId, doctorId, scheduleId, dateTime) => {
-  console.log("patient", patientId);
-  console.log("doctor", doctorId);
-  console.log("schedule", scheduleId);
+ 
   const reservation = new _Reservation({
     patient: patientId,
     doctor: doctorId,
@@ -90,7 +116,12 @@ const deleteReservationByDoctorId = async (doctorId) => {
 };
 
 const makeDoneReservation = async (id) => {
-  const res = _Reservation.findByIdAndUpdate(id, { status: false });
+  const res = _Reservation.findByIdAndUpdate(id, { done: true });
+  return res;
+};
+
+const makeCancelledReservation = async (id) => {
+  const res = _Reservation.findByIdAndUpdate(id, { cancelled: true });
   return res;
 };
 
@@ -109,9 +140,12 @@ module.exports = {
   getReservationById,
   getReservationByDoctorId,
   getDoneReservationByDoctorId,
+  getCancelledReservationByDoctorId,
   getReservationByPatientId,
   getDoneReservationByPatientId,
+  getCancelledReservationByPatientId,
   postReservation,
   deleteAllReservations,
   makeDoneReservation,
+  makeCancelledReservation,
 };

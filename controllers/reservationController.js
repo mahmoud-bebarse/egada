@@ -38,17 +38,6 @@ const postReservation = async (req, res, next) => {
         dateTime
       );
 
-      // update patient reservations array
-      const patient = await patientService.getPatientById(
-        patientId || newPatientId
-      );
-      patient.reservations.push(reservation.id);
-      await patient.save();
-      // update doctor reservations array
-      const doctor = await doctorService.getDoctorById(doctorId);
-      doctor.reservations.push(reservation.id);
-      await doctor.save();
-
       //send response
       res.status(200).send(Response("200", reservation, ""));
     } catch (err) {
@@ -81,14 +70,32 @@ const doneReservation = async (req, res, next) => {
   } else {
     try {
       await reservationService.makeDoneReservation(id);
-       res
+      res
         .status(200)
         .send(Response("200", {}, "Added to Done Reservations successfully.."));
     } catch (err) {
       res.status(500).send(Response("500", {}, err.message));
     }
   }
-}
+};
+
+const cancelledReservation = async (req, res, next) => {
+  const { id } = req.params;
+  if (!id) {
+    res.status(404).send(Response("404", {}, "missing params"));
+  } else {
+    try {
+      await reservationService.makeCancelledReservation(id);
+      res
+        .status(200)
+        .send(
+          Response("200", {}, "Added to cancelled Reservations successfully..")
+        );
+    } catch (err) {
+      res.status(500).send(Response("500", {}, err.message));
+    }
+  }
+};
 
 const deleteReservationsAll = async (req, res, next) => {
   try {
@@ -116,4 +123,5 @@ module.exports = {
   getReservations,
   deleteReservationsAll,
   doneReservation,
+  cancelledReservation,
 };

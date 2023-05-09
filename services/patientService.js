@@ -3,7 +3,7 @@ const _Reservation = require("../models/reservation.js");
 const { generateOtp } = require('../services/mobileAuthService.js')
 
 const getPatients = async () => {
-  const patient = await _Patient.find({ status: true }).select({reservations: 0});
+  const patient = await _Patient.find({ status: true });
   return patient;
 };
 const deleteAllPatients = async () => {

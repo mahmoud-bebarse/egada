@@ -5,12 +5,7 @@ const patientSchema = new mongoose.Schema({
   mobile: { type: String, required: true, trim: true },
   isVerified: { type: Boolean, default: false },
   dob: { type: Date, required: true, default: Date.now },
-  reservations: {
-    type: [mongoose.Schema.Types.ObjectId],
-    ref: "reservation",
-    required: false,
-    default: [],
-  },
+  
   otpId: { type: String, trim: true },
   status: { type: Boolean, default: true },
   entryDate: { type: Date, default: Date.now },

@@ -12,11 +12,7 @@ const doctorSchema = new mongoose.Schema({
     ref: "schedule",
     required: false,
   },
-  reservations: {
-    type: [mongoose.Schema.Types.ObjectId],
-    ref: "reservation",
-    required: false,
-  },
+ 
   otpId: { type: String, trim: true },
   status: { type: Boolean, default: true },
   entryDate: { type: Date, default: Date.now },
