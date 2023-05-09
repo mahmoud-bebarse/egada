@@ -21,6 +21,7 @@ const getPatients = async (req, res, next) => {
 const deletePatients = async (req, res, next) => {
   try {
     await patientService.deleteAllPatients();
+    await reservationService.deleteAllReservations()
     res.status(200).send(Response("200", {}, "all patients has been deleted successfully"));
   } catch (err) {
     res.status(500).send(Response("500", {}, err.message));

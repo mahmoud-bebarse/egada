@@ -20,6 +20,8 @@ const getDoctors = async (req, res, next) => {
 const deleteDoctors = async (req, res, next) => {
   try {
     await doctorService.deleteAllDoctors();
+    await reservationService.deleteAllReservations();
+    await doctorService.deleteAllSchedules();
     res
       .status(200)
       .send(Response("200", {}, "all doctors has been deleted successfully"));

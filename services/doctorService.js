@@ -15,6 +15,10 @@ const deleteAllDoctors = async () => {
   const doctor = await _Doctor.find().deleteMany();
   return doctor;
 };
+const deleteAllSchedules = async () => {
+  const schedule = await _Schedules.find().deleteMany();
+  return schedule;
+};
 const getDoctorById = async (id) => {
   const doctor = await _Doctor
     .findOne({
@@ -104,4 +108,5 @@ module.exports = {
   getSchedulesByDoctorId,
   getDoctorByMobile,
   deleteSchedules,
+  deleteAllSchedules
 };
