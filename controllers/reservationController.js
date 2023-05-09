@@ -79,13 +79,49 @@ const doneReservation = async (req, res, next) => {
   }
 };
 
-const cancelledReservation = async (req, res, next) => {
+const doneReservationByDate = async (req, res, next) => {
   const { id } = req.params;
+  const { dateTime } = req.body;
   if (!id) {
     res.status(404).send(Response("404", {}, "missing params"));
   } else {
     try {
+      await reservationService.makeDoneReservationbyDate(id ,dateTime);
+      res
+        .status(200)
+        .send(Response("200", {}, "Added to Done Reservations successfully.."));
+    } catch (err) {
+      res.status(500).send(Response("500", {}, err.message));
+    }
+  }
+};
+
+const cancelledReservation = async (req, res, next) => {
+  const { id } = req.params;
+  if (!id || !dateTime) {
+    res.status(404).send(Response("404", {}, "missing params or data"));
+  } else {
+    try {
       await reservationService.makeCancelledReservation(id);
+      res
+        .status(200)
+        .send(
+          Response("200", {}, "Added to cancelled Reservations successfully..")
+        );
+    } catch (err) {
+      res.status(500).send(Response("500", {}, err.message));
+    }
+  }
+};
+
+const cancelledReservationByDate = async (req, res, next) => {
+  const { id } = req.params;
+  const { dateTime } = req.body;
+  if (!id || !dateTime) {
+    res.status(404).send(Response("404", {}, "missing params or data"));
+  } else {
+    try {
+      await reservationService.makeCancelledReservation(id,dateTime);
       res
         .status(200)
         .send(
@@ -123,5 +159,7 @@ module.exports = {
   getReservations,
   deleteReservationsAll,
   doneReservation,
+  doneReservationByDate,
   cancelledReservation,
+  cancelledReservationByDate,
 };

@@ -12,8 +12,7 @@ const deleteAllPatients = async () => {
 };
 const getPatientById = async (id) => {
   const patient = _Patient
-    .findOne({ $and: [{ _id: id }, { status: true }] })
-    .select({ reservations: 0 });
+    .findOne({ $and: [{ _id: id }, { status: true }] });
   return patient;
 };
 

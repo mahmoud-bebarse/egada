@@ -116,12 +116,21 @@ const deleteReservationByDoctorId = async (doctorId) => {
 };
 
 const makeDoneReservation = async (id) => {
-  const res = _Reservation.findByIdAndUpdate(id, { done: true });
+  const res = await _Reservation.findByIdAndUpdate(id, { done: true });
+  return res;
+};
+const makeDoneReservationbyDate = async (id , dateTime) => {
+  const res = await _Reservation.find({ doctor: id , date: dateTime}).updateMany({done: true});
+  return res;
+};
+
+const makeCancelledReservationbyDate = async (id , dateTime) => {
+  const res = await _Reservation.find({ doctor: id , date: dateTime}).updateMany({cancelled: true});
   return res;
 };
 
 const makeCancelledReservation = async (id) => {
-  const res = _Reservation.findByIdAndUpdate(id, { cancelled: true });
+  const res = await _Reservation.findByIdAndUpdate(id, { cancelled: true });
   return res;
 };
 
@@ -130,7 +139,7 @@ const deleteAllReservations = async () => {
   return reservation;
 };
 const deleteReservationByPatientId = async (patientId) => {
-  const res = _Reservation.find({ patient: patientId }).deleteMany();
+  const res = await _Reservation.find({ patient: patientId }).deleteMany();
   return res;
 };
 module.exports = {
@@ -148,4 +157,6 @@ module.exports = {
   deleteAllReservations,
   makeDoneReservation,
   makeCancelledReservation,
+  makeCancelledReservationbyDate,
+  makeDoneReservationbyDate,
 };
