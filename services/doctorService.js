@@ -5,6 +5,7 @@ const {generateOtp} = require("../services/mobileAuthService.js");
 const getDoctors = async () => {
   const doctors = await _Doctor
     .find({ status: true })
+    .select({ reservations: 0 })
     .populate("dept")
     .populate("schedules");
   return doctors;
@@ -20,7 +21,7 @@ const getDoctorById = async (id) => {
       $and: [{ _id: id }, { status: true }],
     })
     .populate("dept")
-    .populate("schedules");
+    .populate("schedules").select({reservations: 0});
 
   return doctor;
 };
@@ -53,7 +54,7 @@ const deleteDoctor = async (id) => {
 const getDoctorsByDept = async (deptId) => {
   const doctors = await _Doctor.find({
     $and: [{ status: true }, { dept: deptId }],
-  }).populate({path:"dept", select:{name:1 , _id:0}});
+  }).populate({path:"dept", select:{name:1 , _id:0}}).populate("schedules").select({reservations: 0});
 
   return doctors;
 };

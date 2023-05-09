@@ -19,11 +19,25 @@ const getReservationById = async (id) => {
 
 // get by doctorId
 const getReservationByDoctorId = async (doctorId) => {
-  const reservations = await _Reservation.find({
-    doctor: doctorId, status: true,
-  }).select({ doctor: 0 })
+  const reservations = await _Reservation
+    .find({
+      doctor: doctorId,
+      status: true,
+    })
+    .select({ doctor: 0 })
     .populate("schedule")
-    .populate({path:"patient", select: {name: 1 , dob: 1, _id :0}});
+    .populate({ path: "patient", select: { name: 1, dob: 1, _id: 0 } });
+  return reservations;
+};
+const getDoneReservationByDoctorId = async (doctorId) => {
+  const reservations = await _Reservation
+    .find({
+      doctor: doctorId,
+      status: false,
+    })
+    .select({ doctor: 0 })
+    .populate("schedule")
+    .populate({ path: "patient", select: { name: 1, dob: 1, _id: 0 } });
   return reservations;
 };
 
@@ -31,6 +45,18 @@ const getReservationByDoctorId = async (doctorId) => {
 const getReservationByPatientId = async (patientId) => {
   const reservations = await _Reservation
     .find({ patient: patientId, status: true })
+    .select({ patient: 0 })
+    .populate("schedule")
+    .populate({
+      path: "doctor",
+      populate: "dept",
+      select: { name: 1, dept: 1 },
+    });
+  return reservations;
+};
+const getDoneReservationByPatientId = async (patientId) => {
+  const reservations = await _Reservation
+    .find({ patient: patientId, status: false })
     .select({ patient: 0 })
     .populate("schedule")
     .populate({
@@ -50,7 +76,7 @@ const postReservation = async (patientId, doctorId, scheduleId, dateTime) => {
     patient: patientId,
     doctor: doctorId,
     schedule: scheduleId,
-    date : dateTime
+    date: dateTime,
   });
 
   const res = await reservation.save();
@@ -58,15 +84,20 @@ const postReservation = async (patientId, doctorId, scheduleId, dateTime) => {
 };
 
 // delete reservation
-const deleteReservationByDoctorId  = async (doctorId) => {
+const deleteReservationByDoctorId = async (doctorId) => {
   const res = await _Reservation.find({ doctor: doctorId }).deleteMany();
+  return res;
+};
+
+const makeDoneReservation = async (id) => {
+  const res = _Reservation.findByIdAndUpdate(id, { status: false });
   return res;
 };
 
 const deleteAllReservations = async () => {
   const reservation = await _Reservation.find().deleteMany();
   return reservation;
-}
+};
 const deleteReservationByPatientId = async (patientId) => {
   const res = _Reservation.find({ patient: patientId }).deleteMany();
   return res;
@@ -77,7 +108,10 @@ module.exports = {
   getReservations,
   getReservationById,
   getReservationByDoctorId,
+  getDoneReservationByDoctorId,
   getReservationByPatientId,
+  getDoneReservationByPatientId,
   postReservation,
-  deleteAllReservations
+  deleteAllReservations,
+  makeDoneReservation,
 };

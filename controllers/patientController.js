@@ -55,6 +55,20 @@ const getRservations = async (req, res, next) => {
     res.status(500).send(Response("500", {},  err.message ));
   }
 };
+
+const getDoneRservations = async (req, res, next) => {
+  const { id } = req.params;
+  if (!id)
+    res
+      .status(404)
+      .send(Response("404", {}, "some missing fields"));
+  try {
+    const result = await reservationService.getDoneReservationByPatientId(id);
+    res.status(200).send(Response("200", result, ""));
+  } catch (err) {
+    res.status(500).send(Response("500", {},  err.message ));
+  }
+};
 // post patient
 const postPatient = async (req, res, next) => {
   const { name, mobile, dob } = req.body;
@@ -167,6 +181,7 @@ module.exports = {
   getPatients,
   getPatientById,
   getRservations,
+  getDoneRservations,
   postPatient,
   patientLogin,
   deletePatient,

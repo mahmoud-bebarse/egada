@@ -60,16 +60,35 @@ const postReservation = async (req, res, next) => {
 // delete reservations by doctor id
 const deleteReservations = async (req, res, next) => {
   const { id } = req.params;
-  if (!id) res.status(404).send(Response("404", {}, "missing params"));
-  try {
-    await reservationService.deleteReservationByDoctorId(id);
-    res
-      .status(200)
-      .send(Response("200", {}, "reservations deleted successfully.."));
-  } catch (err) {
-    res.status(500).send(Response("500", {}, err.message));
+  if (!id) {
+    res.status(404).send(Response("404", {}, "missing params"));
+  } else {
+    try {
+      await reservationService.deleteReservationByDoctorId(id);
+      res
+        .status(200)
+        .send(Response("200", {}, "reservations deleted successfully.."));
+    } catch (err) {
+      res.status(500).send(Response("500", {}, err.message));
+    }
   }
 };
+
+const doneReservation = async (req, res, next) => {
+  const { id } = req.params;
+  if (!id) {
+    res.status(404).send(Response("404", {}, "missing params"));
+  } else {
+    try {
+      await reservationService.makeDoneReservation(id);
+       res
+        .status(200)
+        .send(Response("200", {}, "Added to Done Reservations successfully.."));
+    } catch (err) {
+      res.status(500).send(Response("500", {}, err.message));
+    }
+  }
+}
 
 const deleteReservationsAll = async (req, res, next) => {
   try {
@@ -96,4 +115,5 @@ module.exports = {
   deleteReservations,
   getReservations,
   deleteReservationsAll,
+  doneReservation,
 };
