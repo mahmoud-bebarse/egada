@@ -98,7 +98,7 @@ const doneReservationByDate = async (req, res, next) => {
 
 const cancelledReservation = async (req, res, next) => {
   const { id } = req.params;
-  if (!id || !dateTime) {
+  if (!id ) {
     res.status(404).send(Response("404", {}, "missing params or data"));
   } else {
     try {
