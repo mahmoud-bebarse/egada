@@ -96,10 +96,10 @@ const getCancelledRservations = async (req, res, next) => {
 
 // post doctor
 const postDoctor = async (req, res, next) => {
-  const { name, mobile, dept,address,fee } = req.body;
+  const { name, mobile, dept,address,fee, desc } = req.body;
 
   // validation
-  if (!name && !mobile && !dept && !address && !fee) {
+  if (!name || !mobile || !dept || !address || !fee || !desc) {
     res.status(404).send(Response("404", {}, "some missing fields"));
   }
   // checking if mobile already exists
@@ -113,7 +113,7 @@ const postDoctor = async (req, res, next) => {
   } else {
     // post
     try {
-      const result = await doctorService.postDoctor(name, mobile, dept,address,fee);
+      const result = await doctorService.postDoctor(name, mobile, dept,address,fee,desc);
       res.status(200).send(Response("200", {result}, "OTP sent successfully"));
     } catch (err) {
       res.status(500).send(Response("500", {}, err.message));

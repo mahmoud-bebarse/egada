@@ -30,13 +30,14 @@ const getDoctorById = async (id) => {
   return doctor;
 };
 
-const postDoctor = async (name, mobile, dept,address,fee) => {
+const postDoctor = async (name, mobile, dept,address,fee,desc) => {
   const doctor = new _Doctor({
     name,
     mobile,
     dept,
     address,
-    fee
+    fee,
+    desc
   });
 
    await doctor.save();
