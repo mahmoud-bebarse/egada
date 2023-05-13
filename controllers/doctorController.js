@@ -9,8 +9,6 @@ const {
 const reservationService = require("../services/reservationService.js");
 const _Schedules = require("../models/schedule.js");
 
-
-
 // get doctors
 const getDoctors = async (req, res, next) => {
   const doctors = await doctorService.getDoctors();
@@ -60,6 +58,21 @@ const getDoctorsByDept = async (req, res, next) => {
     }
   }
 };
+
+const getDoctorsByGovern = async (req, res, next) => {
+  const { govern } = req.body;
+  if (!govern) {
+    res.status(404).send(Response("404", {}, "missing data"));
+  } else {
+    try {
+      const doctor = await doctorService.getDoctorByGovern(govern);
+      res.status(200).send(Response("200", doctor, ""));
+    } catch (err) {
+      res.status(500).send(Response("500", {}, err.message));
+    }
+  }
+};
+
 // get reservations by doctor id
 const getRservations = async (req, res, next) => {
   const { id } = req.params;
@@ -87,7 +100,9 @@ const getCancelledRservations = async (req, res, next) => {
   const { id } = req.params;
   if (!id) res.status(404).send(Response("404", {}, "some missing fields"));
   try {
-    const result = await reservationService.getCancelledReservationByDoctorId(id);
+    const result = await reservationService.getCancelledReservationByDoctorId(
+      id
+    );
     res.status(200).send(Response("200", result, ""));
   } catch (err) {
     res.status(500).send(Response("500", {}, err.message));
@@ -96,10 +111,10 @@ const getCancelledRservations = async (req, res, next) => {
 
 // post doctor
 const postDoctor = async (req, res, next) => {
-  const { name, mobile, dept,address,fee, desc } = req.body;
+  const { name, mobile, dept, address, fee, desc, govern } = req.body;
 
   // validation
-  if (!name || !mobile || !dept || !address || !fee || !desc) {
+  if (!name || !mobile || !dept || !address || !fee || !desc || !govern) {
     res.status(404).send(Response("404", {}, "some missing fields"));
   }
   // checking if mobile already exists
@@ -113,8 +128,18 @@ const postDoctor = async (req, res, next) => {
   } else {
     // post
     try {
-      const result = await doctorService.postDoctor(name, mobile, dept,address,fee,desc);
-      res.status(200).send(Response("200", {result}, "OTP sent successfully"));
+      const result = await doctorService.postDoctor(
+        name,
+        mobile,
+        dept,
+        address,
+        fee,
+        desc,
+        govern
+      );
+      res
+        .status(200)
+        .send(Response("200", { result }, "OTP sent successfully"));
     } catch (err) {
       res.status(500).send(Response("500", {}, err.message));
     }
@@ -130,14 +155,14 @@ const doctorLogin = async (req, res, next) => {
   if (!found)
     res
       .status(404)
-      .send(Response("404", {} , "there is no doctor with this mobile number"));
+      .send(Response("404", {}, "there is no doctor with this mobile number"));
 
   //generating otp
   const result = await generateOtp(mobile);
   found.otpId = result.data.otp_id;
   found.save();
 
-  res.status(200).send(Response("200",found._id , "OTP sent successfully .. "));
+  res.status(200).send(Response("200", found._id, "OTP sent successfully .. "));
 };
 
 // delete doctor
@@ -163,11 +188,10 @@ const deleteDoctor = async (req, res, next) => {
 // post doctor schedules
 const postDoctorSchedules = async (req, res, next) => {
   const { id } = req.params;
-  const { fromHr,fromMin,toHr,toMin, day } = req.body;
-  if (!fromHr || !toHr ) {
+  const { fromHr, fromMin, toHr, toMin, day } = req.body;
+  if (!fromHr || !toHr) {
     res.status(404).send(Response("404", {}, "missing fields"));
-  } else
-  {
+  } else {
     try {
       const schedule = await doctorService.addDoctorsSchedules(
         id,
@@ -187,15 +211,18 @@ const postDoctorSchedules = async (req, res, next) => {
       res.status(500).send(Response("500", {}, err.message));
     }
   }
-  
 };
 
 const putSchedules = async (req, res, next) => {
   const { doctorId, id } = req.params;
   const { fromHr, fromMin, toHr, toMin, day } = req.body;
-  if (!doctorId || !id) res.status(404).send(Response("404", {}, "missing params"));
+  if (!doctorId || !id)
+    res.status(404).send(Response("404", {}, "missing params"));
   try {
-    const schedule = await _Schedules.findOneAndUpdate({ doctor: doctorId, _id: id },{fromHr,fromMin,toHr,toMin,day});
+    const schedule = await _Schedules.findOneAndUpdate(
+      { doctor: doctorId, _id: id },
+      { fromHr, fromMin, toHr, toMin, day }
+    );
     schedule.save();
     res.status(200).send(Response("200", schedule, ""));
   } catch (err) {
@@ -240,7 +267,9 @@ const verifyDoctorOtp = async (req, res, next) => {
       doctor.isVerified = true;
       doctor.save();
 
-      res.status(200).send(Response("200", {doctor}, "verified successfully"));
+      res
+        .status(200)
+        .send(Response("200", { doctor }, "verified successfully"));
     } else {
       res.status(400).send(Response("400", {}, "invalid otp"));
     }
@@ -265,6 +294,7 @@ module.exports = {
   getDoctorSchedules,
   getDoctorById,
   getDoctorsByDept,
+  getDoctorsByGovern,
   getRservations,
   getDoneRservations,
   getCancelledRservations,

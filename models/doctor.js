@@ -13,7 +13,7 @@ const doctorSchema = new mongoose.Schema({
     ref: "schedule",
     required: false,
   },
-
+  governorate: { type: String, required: true, trim: true },
   otpId: { type: String, trim: true },
   status: { type: Boolean, default: true },
   entryDate: { type: Date, default: Date.now },

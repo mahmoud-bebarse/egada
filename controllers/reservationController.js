@@ -63,6 +63,23 @@ const deleteReservations = async (req, res, next) => {
   }
 };
 
+const putReservations = async (req,res,next) => {
+  const { id } = req.params;
+  const { scheduleId, dateTime } = req.body;
+  if (!id) {
+    res.status(404).send(Response("404", {}, "missing params"));
+  } else {
+    try {
+      await reservationService.putReservation(id, scheduleId, dateTime);
+      res
+        .status(200)
+        .send(Response("200", {}, "reservations edited successfully.."));
+    } catch (err) {
+      res.status(500).send(Response("500", {}, err.message));
+    }
+  }
+ }
+
 const doneReservation = async (req, res, next) => {
   const { id } = req.params;
   if (!id) {
@@ -155,6 +172,7 @@ const getReservations = async (req, res, next) => {
 };
 module.exports = {
   postReservation,
+  putReservations,
   deleteReservations,
   getReservations,
   deleteReservationsAll,

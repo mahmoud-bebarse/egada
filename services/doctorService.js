@@ -30,14 +30,15 @@ const getDoctorById = async (id) => {
   return doctor;
 };
 
-const postDoctor = async (name, mobile, dept,address,fee,desc) => {
+const postDoctor = async (name, mobile, dept,address,fee,desc,govern) => {
   const doctor = new _Doctor({
     name,
     mobile,
     dept,
     address,
     fee,
-    desc
+    desc,
+    governorate: govern
   });
 
    await doctor.save();
@@ -63,6 +64,17 @@ const getDoctorsByDept = async (deptId) => {
 
   return doctors;
 };
+
+const getDoctorByGovern = async (govern) => {
+  const doctors = await _Doctor
+    .find({
+      $and: [{ status: true }, { governorate : govern }],
+    })
+    .populate({ path: "dept", select: { name: 1, _id: 0 } })
+    .populate("schedules");
+
+  return doctors;
+}
 
 const addDoctorsSchedules = async (doctor,fromHr,fromMin,toHr,toMin,day) => {
   const schedule = new _Schedules({
@@ -105,6 +117,7 @@ module.exports = {
   postDoctor,
   deleteDoctor,
   getDoctorsByDept,
+  getDoctorByGovern,
   addDoctorsSchedules,
   getSchedulesByDoctorId,
   getDoctorByMobile,
