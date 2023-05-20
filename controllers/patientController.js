@@ -12,76 +12,95 @@ const {
 const getPatients = async (req, res, next) => {
   try {
     const patients = await patientService.getPatients();
-    res.status(200).send(Response("200", patients, {}));
+    if (!patients) {
+      res.status(200).send(Response(false, {}, "There is no patient"));
+    } else {
+      res.status(200).send(Response(true, patients, ""));
+    }
   } catch (err) {
-    res.status(500).send(Response("500", {}, err.message ));
+    res.status(500).send(Response(false, {}, err.message));
   }
 };
 
 const deletePatients = async (req, res, next) => {
   try {
     await patientService.deleteAllPatients();
-    await reservationService.deleteAllReservations()
-    res.status(200).send(Response("200", {}, "all patients has been deleted successfully"));
+    await reservationService.deleteAllReservations();
+    res
+      .status(200)
+      .send(Response(true, {}, "All patients has been deleted successfully"));
   } catch (err) {
-    res.status(500).send(Response("500", {}, err.message));
+    res.status(500).send(Response(false, {}, err.message));
   }
 };
 
 const getPatientById = async (req, res, next) => {
   const { id } = req.params;
   if (!id) {
-    res.status(404).send(Response("404", {},  "missing params" ));
+    res.status(200).send(Response(false, {}, "Missing params"));
   }
 
   try {
     const patient = await patientService.getPatientById(id);
-    res.status(200).send(Response("200", patient, ''));
+    if (!patient) {
+      res
+        .status(200)
+        .send(Response(false, {}, "There is no patient with this id"));
+    } else {
+      res.status(200).send(Response(true, patient, ""));
+    }
   } catch (err) {
-    res.status(500).send(Response("500", {},  err.message ));
+    res.status(500).send(Response(false, {}, err.message));
   }
 };
 
 // get reservations by id
 const getRservations = async (req, res, next) => {
   const { id } = req.params;
-  if (!id)
-    res
-      .status(404)
-      .send(Response("404", {}, "some missing fields"));
+  if (!id) res.status(200).send(Response(false, {}, "Missing data"));
   try {
     const result = await reservationService.getReservationByPatientId(id);
-    res.status(200).send(Response("200", result, ""));
+    if (!result) {
+      res.status(200).send(Response(false, {}, "There is no reservatons"));
+    } else {
+      res.status(200).send(Response(true, result, ""));
+    }
   } catch (err) {
-    res.status(500).send(Response("500", {},  err.message ));
+    res.status(500).send(Response(false, {}, err.message));
   }
 };
 
 const getDoneRservations = async (req, res, next) => {
   const { id } = req.params;
-  if (!id)
-    res
-      .status(404)
-      .send(Response("404", {}, "some missing fields"));
+  if (!id) res.status(200).send(Response(false, {}, "Missing params"));
   try {
     const result = await reservationService.getDoneReservationByPatientId(id);
-    res.status(200).send(Response("200", result, ""));
+    if (!result) {
+      res.status(200).send(Response(false, {}, "There is no done reservatons"));
+    } else {
+      res.status(200).send(Response(true, result, ""));
+    }
   } catch (err) {
-    res.status(500).send(Response("500", {},  err.message ));
+    res.status(500).send(Response(false, {}, err.message));
   }
 };
 
 const getCancelledRservations = async (req, res, next) => {
   const { id } = req.params;
-  if (!id)
-    res
-      .status(404)
-      .send(Response("404", {}, "some missing fields"));
+  if (!id) res.status(200).send(Response(false, {}, "Missing params"));
   try {
-    const result = await reservationService.getCancelledReservationByPatientId(id);
-    res.status(200).send(Response("200", result, ""));
+    const result = await reservationService.getCancelledReservationByPatientId(
+      id
+    );
+    if (!result) {
+      res
+        .status(200)
+        .send(Response(false, {}, "There is no cancelled reservatons"));
+    } else {
+      res.status(200).send(Response(true, result, ""));
+    }
   } catch (err) {
-    res.status(500).send(Response("500", {},  err.message ));
+    res.status(500).send(Response(false, {}, err.message));
   }
 };
 // post patient
@@ -90,26 +109,22 @@ const postPatient = async (req, res, next) => {
 
   // validation
   if (!name && !mobile && !dob) {
-    res
-      .status(404)
-      .send(Response("404", {},  "some missing fields" ));
+    res.status(200).send(Response(false, {}, "Missing data"));
   }
   // checking if mobile already exists
   const find = await patientService.getPatientByMobile(mobile);
   const found = await doctorService.getDoctorByMobile(mobile);
   if (find || found) {
     res
-      .status(400)
-      .send(
-        Response("400", {}, "this mobile number already exists" )
-      );
+      .status(200)
+      .send(Response(false, {}, "This mobile number already exists"));
   } else {
     // post
     try {
       const result = await patientService.postPatient(name, mobile, dob);
-      res.status(200).send(Response("200", result, 'OTP sent seccessfully'));
+      res.status(200).send(Response(true, result, "OTP sent seccessfully"));
     } catch (err) {
-      res.status(500).send(Response("500", {},  err.message ));
+      res.status(500).send(Response(false, {}, err.message));
     }
   }
 };
@@ -118,28 +133,19 @@ const postPatient = async (req, res, next) => {
 const patientLogin = async (req, res, next) => {
   const { mobile } = req.body;
   // validation
-  if (!mobile)
-    res.status(404).send(Response("404", {}, "missing fields" ));
+  if (!mobile) res.status(200).send(Response(false, {}, "Missing data"));
   const found = await patientService.getPatientByMobile(mobile);
   if (!found)
     res
-      .status(404)
-      .send(
-        Response(
-          "404",
-          {},
-           "there is no patient with this mobile number" 
-        )
-      );
+      .status(200)
+      .send(Response(false, {}, "There is no patient with this mobile number"));
 
   //generating otp
   const result = await generateOtp(mobile);
   found.otpId = result.data.otp_id;
   found.save();
 
-  res
-    .status(200)
-    .send(Response("200",found._id, "OTP sent successfully .. " ));
+  res.status(200).send(Response(true, found._id, "OTP sent successfully .. "));
 };
 
 // delete patient
@@ -147,18 +153,16 @@ const deletePatient = async (req, res, next) => {
   const { id } = req.params;
 
   if (!id) {
-    res
-      .status(404)
-      .send(Response("404", {},  "some missing fields" ));
+    res.status(200).send(Response(false, {}, "Missing params"));
   }
 
   // delete
   try {
     await patientService.deletePatient(id);
     await reservationService.deleteReservationByPatientId(id);
-    res.status(200).send(Response("200",{}, 'Patient deleted succssefully..'));
+    res.status(200).send(Response(true, {}, "Patient deleted succssefully.."));
   } catch (err) {
-    res.status(500).send(Response("500", {}, err.message ));
+    res.status(500).send(Response(false, {}, err.message));
   }
 };
 
@@ -175,9 +179,9 @@ const verifyPatientOtp = async (req, res, next) => {
 
       res
         .status(200)
-        .send(Response("200", {patient},  "verified successfully" ));
+        .send(Response(true,  patient , "Verified successfully"));
     } else {
-      res.status(400).send(Response("400", {},  "invalid otp" ));
+      res.status(200).send(Response(true, {}, "invalid otp"));
     }
   });
 };
@@ -189,7 +193,7 @@ const resendPatientOtp = async (req, res, next) => {
 
   await resendOtp(patient.otpId);
 
-  res.status(200).send(Response("200", {}, 'OTP resent successfully'));
+  res.status(200).send(Response(true, {}, "OTP resent successfully"));
 };
 
 module.exports = {
@@ -203,5 +207,5 @@ module.exports = {
   deletePatient,
   verifyPatientOtp,
   resendPatientOtp,
-  deletePatients
+  deletePatients,
 };

@@ -1,11 +1,11 @@
 const _Doctor = require("../models/doctor.js");
 const _Schedules = require("../models/schedule.js");
-const {generateOtp} = require("../services/mobileAuthService.js");
+const { generateOtp } = require("../services/mobileAuthService.js");
 
 const getDoctors = async () => {
   const doctors = await _Doctor
     .find({ status: true })
-    
+
     .populate("dept")
     .populate("schedules");
   return doctors;
@@ -30,7 +30,7 @@ const getDoctorById = async (id) => {
   return doctor;
 };
 
-const postDoctor = async (name, mobile, dept,address,fee,desc,govern) => {
+const postDoctor = async (name, mobile, dept, address, fee, desc, govern) => {
   const doctor = new _Doctor({
     name,
     mobile,
@@ -38,12 +38,12 @@ const postDoctor = async (name, mobile, dept,address,fee,desc,govern) => {
     address,
     fee,
     desc,
-    governorate: govern
+    governorate: govern,
   });
 
-   await doctor.save();
+  await doctor.save();
 
-  const result = await generateOtp(mobile)
+  const result = await generateOtp(mobile);
 
   doctor.otpId = result.data.otp_id;
   await doctor.save();
@@ -58,9 +58,12 @@ const deleteDoctor = async (id) => {
 };
 
 const getDoctorsByDept = async (deptId) => {
-  const doctors = await _Doctor.find({
-    $and: [{ status: true }, { dept: deptId }],
-  }).populate({path:"dept", select:{name:1 , _id:0}}).populate("schedules");
+  const doctors = await _Doctor
+    .find({
+      $and: [{ status: true }, { dept: deptId }],
+    })
+    .populate({ path: "dept", select: { name: 1, _id: 0 } })
+    .populate("schedules");
 
   return doctors;
 };
@@ -68,47 +71,52 @@ const getDoctorsByDept = async (deptId) => {
 const getDoctorByGovern = async (govern) => {
   const doctors = await _Doctor
     .find({
-      $and: [{ status: true }, { governorate : govern }],
+      $and: [{ status: true }, { governorate: govern }],
     })
     .populate({ path: "dept", select: { name: 1, _id: 0 } })
     .populate("schedules");
 
   return doctors;
-}
-
-const addDoctorsSchedules = async (doctor,fromHr,fromMin,toHr,toMin,day) => {
-  const schedule = new _Schedules({
-    doctor,
-    fromHr,
-    fromMin,
-    toHr,
-    toMin,
-    day,
-  });
-  const res = await schedule.save();
-  return res;
 };
 
+const addDoctorsSchedules = async (
+  doctor,
+  fromHr,
+  fromMin,
+  toHr,
+  toMin,
+  day
+) => {
+  const schedule = new _Schedules({
+    doctor : doctor,
+    fromHr : fromHr,
+    fromMin : fromMin,
+    toHr : toHr,
+    toMin : toMin,
+    day : day
+  });
+  await schedule.save();
+  return schedule;
+};
 
 const getDoctorByMobile = async (mobile) => {
-  const doctor = await _Doctor.findOne({$and:[
-    {mobile: mobile},
-    {status: true}
-  ]})
+  const doctor = await _Doctor.findOne({
+    $and: [{ mobile: mobile }, { status: true }],
+  });
 
-  return doctor ;
-}
+  return doctor;
+};
 
 const getSchedulesByDoctorId = async (id) => {
   const schedules = await _Schedules.find({ doctor: id });
-  
-  return schedules ;
-}
+
+  return schedules;
+};
 
 const deleteSchedules = async (id) => {
   const schedule = await _Schedules.find({ doctor: id }).deleteMany();
   return schedule;
-}
+};
 
 module.exports = {
   getDoctors,
@@ -122,5 +130,5 @@ module.exports = {
   getSchedulesByDoctorId,
   getDoctorByMobile,
   deleteSchedules,
-  deleteAllSchedules
+  deleteAllSchedules,
 };
