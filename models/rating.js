@@ -11,7 +11,7 @@ const ratingSchema = new mongoose.Schema({
     ref: "doctor",
     required: true,
   },
-  rate: { type: Number, required: false, default: 1 },
+  rate: { type: Number, required: false, default: 1 , min: 0 , max: 5},
   comment: { type: String, required: false, default: "" },
   entryDate: { type: Date, default: Date.now },
 });

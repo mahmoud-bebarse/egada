@@ -64,7 +64,12 @@ const postRating = async (patient, doctor, rate, comment) => {
   })
   await rating.save();
   return rating;
-}
+};
+
+const deleteRatings = async (id) => {
+  const rating = await _Rating.find({ doctor: id }).deleteMany();
+  return rating;
+};
 module.exports = {
   getPatients,
   deleteAllPatients,
@@ -72,5 +77,6 @@ module.exports = {
   deletePatient,
   getPatientById,
   getPatientByMobile,
-  postRating
+  postRating,
+  deleteRatings
 };

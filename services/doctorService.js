@@ -1,13 +1,14 @@
 const _Doctor = require("../models/doctor.js");
 const _Schedules = require("../models/schedule.js");
+const _Rating = require ("../models/rating.js")
 const { generateOtp } = require("../services/mobileAuthService.js");
 
 const getDoctors = async () => {
   const doctors = await _Doctor
     .find({ status: true })
-
     .populate("dept")
-    .populate("schedules");
+    .populate("schedules")
+    .populate({path:"rating", select:({rate: 1 , _id: 0 })});
   return doctors;
 };
 
@@ -25,7 +26,8 @@ const getDoctorById = async (id) => {
       $and: [{ _id: id }, { status: true }],
     })
     .populate("dept")
-    .populate("schedules");
+    .populate("schedules")
+    .populate({ path: "rating", select: { rate: 1, _id: 0 } });
 
   return doctor;
 };
@@ -117,6 +119,14 @@ const deleteSchedules = async (id) => {
   const schedule = await _Schedules.find({ doctor: id }).deleteMany();
   return schedule;
 };
+const getRatings = async (id) => {
+  const rating = await _Rating
+    .find({ doctor: id })
+    .populate({ path: "patient", select: { name: 1, _id: 0 } })
+    .populate({ path: "doctor", select: { name: 1, _id: 0 } })
+    .select({ _id: 0 });
+  return rating;
+};
 
 module.exports = {
   getDoctors,
@@ -131,4 +141,5 @@ module.exports = {
   getDoctorByMobile,
   deleteSchedules,
   deleteAllSchedules,
+  getRatings
 };

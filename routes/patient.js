@@ -1,7 +1,5 @@
 const express = require("express");
 const patientController = require("../controllers/patientController.js");
-const { authorize } = require("../middlewares/authorize.js");
-const { verifyToken } = require("../middlewares/auth.js");
 
 const router = express.Router();
 
@@ -16,5 +14,6 @@ router.delete("/delete/:id", patientController.deletePatient);
 router.delete("/deleteAll", patientController.deletePatients)
 router.post("/verifyOtp", patientController.verifyPatientOtp);
 router.post("/resendOtp", patientController.resendPatientOtp);
-
+router.post("/rating", patientController.addRating);
+router.delete("/deleteRatings/:id", patientController.deleteRating);
 module.exports = router;

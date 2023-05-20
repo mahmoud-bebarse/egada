@@ -145,7 +145,7 @@ const patientLogin = async (req, res, next) => {
   found.otpId = result.data.otp_id;
   found.save();
 
-  res.status(200).send(Response(true,  found._id , "OTP sent successfully .. "));
+  res.status(200).send(Response(true, found._id, "OTP sent successfully .. "));
 };
 
 // delete patient
@@ -177,11 +177,9 @@ const verifyPatientOtp = async (req, res, next) => {
       patient.isVerified = true;
       patient.save();
 
-      res
-        .status(200)
-        .send(Response(true,  patient , "Verified successfully"));
+      res.status(200).send(Response(true, patient, "Verified successfully"));
     } else {
-      res.status(200).send(Response(true, {}, "invalid otp"));
+      res.status(200).send(Response(false, {}, "invalid otp"));
     }
   });
 };
@@ -199,10 +197,39 @@ const resendPatientOtp = async (req, res, next) => {
 const addRating = async (req, res, next) => {
   const { patient, doctor, rate, comment } = req.body;
   if (!patient || !doctor) {
-    
+    res.status(200).send(Response(false, {}, "Missing data"));
+  } else {
+    try {
+      const review = await patientService.postRating(
+        patient,
+        doctor,
+        rate,
+        comment
+      );
+      await review.save();
+      const doctors = await doctorService.getDoctorById(doctor);
+      doctors.rating.push(review._id);
+      doctors.save();
+      res.status(200).send(Response(true, review, ""));
+    } catch (err) {
+      res.status(500).send(Response(false, {}, err.message));
+    }
   }
-}
+};
 
+const deleteRating = async (req, res, next) => {
+  const { id } = req.params;
+  if (!id) {
+    res.status(200).send(Response(false, {}, "Missing params"));
+  } else {
+    try {
+      await patientService.deleteRatings(id);
+      res.status(200).send(Response(true, {}, "Ratings deleted successfully.."));
+    } catch (err) {
+      res.status(500).send(Response(false, {}, err.message));
+    }
+  }
+};
 module.exports = {
   getPatients,
   getPatientById,
@@ -215,4 +242,6 @@ module.exports = {
   verifyPatientOtp,
   resendPatientOtp,
   deletePatients,
+  addRating,
+  deleteRating
 };

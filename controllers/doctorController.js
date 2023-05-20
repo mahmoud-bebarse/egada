@@ -350,6 +350,24 @@ const resendDoctorOtp = async (req, res, next) => {
   res.status(200).send(Response(true, {}, "OTP resent successfully.."));
 };
 
+const getRatingsByDoctorId = async (req, res, next) => {
+  const { id } = req.params;
+  if (!id) {
+    res.status(200).send(Response(false, {}, "Missing params"));
+  } else {
+    try {
+      const result = await doctorService.getRatings(id);
+      if (!result) {
+        res.status(200).send(Response(false, {}, "There is no ratings on this doctor"));
+      } else {
+        res.status(200).send(Response(true, result, ""));
+      }
+    } catch (err) {
+      res.status(500).send(Response(false, {}, err.message));
+    }
+  }
+};
+
 module.exports = {
   getDoctors,
   postDoctor,
@@ -369,4 +387,5 @@ module.exports = {
   deleteSchedules,
   deleteSchedulesAll,
   putSchedules,
+  getRatingsByDoctorId
 };
