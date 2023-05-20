@@ -217,14 +217,28 @@ const addRating = async (req, res, next) => {
   }
 };
 
-const deleteRating = async (req, res, next) => {
+const deleteRatingByDoctorId = async (req, res, next) => {
   const { id } = req.params;
   if (!id) {
     res.status(200).send(Response(false, {}, "Missing params"));
   } else {
     try {
-      await patientService.deleteRatings(id);
+      await patientService.deleteRatingsByDocId(id);
       res.status(200).send(Response(true, {}, "Ratings deleted successfully.."));
+    } catch (err) {
+      res.status(500).send(Response(false, {}, err.message));
+    }
+  }
+};
+
+const deleteRatings = async (req, res, next) => {
+  const { id } = req.params;
+  if (!id) {
+    res.status(200).send(Response(false, {}, "Missing params"));
+  } else {
+    try {
+      await patientService.deleteRatingsById(id);
+      res.status(200).send(Response(true, {}, "Rating deleted successfully.."));
     } catch (err) {
       res.status(500).send(Response(false, {}, err.message));
     }
@@ -243,5 +257,6 @@ module.exports = {
   resendPatientOtp,
   deletePatients,
   addRating,
-  deleteRating
+  deleteRatingByDoctorId,
+  deleteRatings
 };

@@ -15,5 +15,6 @@ router.delete("/deleteAll", patientController.deletePatients)
 router.post("/verifyOtp", patientController.verifyPatientOtp);
 router.post("/resendOtp", patientController.resendPatientOtp);
 router.post("/rating", patientController.addRating);
-router.delete("/deleteRatings/:id", patientController.deleteRating);
+router.delete("/deleteRatings/doctor/:id", patientController.deleteRatingByDoctorId);
+router.delete("/deleteRatings/:id", patientController.deleteRatings);
 module.exports = router;

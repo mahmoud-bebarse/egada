@@ -123,8 +123,7 @@ const getRatings = async (id) => {
   const rating = await _Rating
     .find({ doctor: id })
     .populate({ path: "patient", select: { name: 1, _id: 0 } })
-    .populate({ path: "doctor", select: { name: 1, _id: 0 } })
-    .select({ _id: 0 });
+    .populate({ path: "doctor", select: { name: 1, _id: 0 } });
   return rating;
 };
 
