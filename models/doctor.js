@@ -13,6 +13,11 @@ const doctorSchema = new mongoose.Schema({
     ref: "schedule",
     required: false,
   },
+  rating: {
+    type: [mongoose.Schema.Types.ObjectId],
+    ref: "rating",
+    required: false,
+  },
   governorate: { type: String, required: true, trim: true },
   otpId: { type: String, trim: true },
   status: { type: Boolean, default: true },

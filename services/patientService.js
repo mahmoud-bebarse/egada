@@ -1,5 +1,6 @@
 const _Patient = require("../models/patient.js");
 const _Reservation = require("../models/reservation.js");
+const _Rating = require("../models/rating.js"); 
 const { generateOtp } = require('../services/mobileAuthService.js')
 
 const getPatients = async () => {
@@ -44,19 +45,32 @@ const deletePatient = async (id) => {
 };
 
 const getPatientByMobile = async (mobile) => {
-  const patient = await _Patient.findOne({$and:[
-    {mobile: mobile},
-    {status: true}
-  ]})
+  const patient = await _Patient.findOne({
+    $and: [
+      { mobile: mobile },
+      { status: true }
+    ]
+  })
 
   return patient
-}
+};
 
+const postRating = async (patient, doctor, rate, comment) => {
+  const rating = new _Rating({
+    patient,
+    doctor,
+    rate,
+    comment
+  })
+  await rating.save();
+  return rating;
+}
 module.exports = {
   getPatients,
   deleteAllPatients,
   postPatient,
   deletePatient,
   getPatientById,
-  getPatientByMobile
+  getPatientByMobile,
+  postRating
 };

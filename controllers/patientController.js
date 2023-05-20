@@ -138,14 +138,14 @@ const patientLogin = async (req, res, next) => {
   if (!found)
     res
       .status(200)
-      .send(Response(false, {}, "There is no patient with this mobile number"));
+      .send(Response(false, "", "There is no patient with this mobile number"));
 
   //generating otp
   const result = await generateOtp(mobile);
   found.otpId = result.data.otp_id;
   found.save();
 
-  res.status(200).send(Response(true, found._id, "OTP sent successfully .. "));
+  res.status(200).send(Response(true,  found._id , "OTP sent successfully .. "));
 };
 
 // delete patient
@@ -195,6 +195,13 @@ const resendPatientOtp = async (req, res, next) => {
 
   res.status(200).send(Response(true, {}, "OTP resent successfully"));
 };
+
+const addRating = async (req, res, next) => {
+  const { patient, doctor, rate, comment } = req.body;
+  if (!patient || !doctor) {
+    
+  }
+}
 
 module.exports = {
   getPatients,
