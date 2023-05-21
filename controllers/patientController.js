@@ -207,8 +207,11 @@ const addRating = async (req, res, next) => {
         comment
       );
       await review.save();
-      const doctors = await doctorService.getDoctorById(doctor);
-      doctors.rating.push(review._id);
+      const reviews = await doctorService.getRatings(doctor);
+      const sum = reviews.reduce((acc, review) => acc + review.rate, 0);
+      const avgRating = sum / reviews.length;
+      const doctors = await doctorService.updateAvgRatingByDoctorId(doctor, avgRating);
+      
       doctors.save();
       res.status(200).send(Response(true, review, ""));
     } catch (err) {

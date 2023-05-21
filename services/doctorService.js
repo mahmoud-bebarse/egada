@@ -1,14 +1,13 @@
 const _Doctor = require("../models/doctor.js");
 const _Schedules = require("../models/schedule.js");
-const _Rating = require ("../models/rating.js")
+const _Rating = require("../models/rating.js");
 const { generateOtp } = require("../services/mobileAuthService.js");
 
 const getDoctors = async () => {
   const doctors = await _Doctor
     .find({ status: true })
     .populate("dept")
-    .populate("schedules")
-    .populate({path:"rating", select:({rate: 1 , _id: 0 })});
+    .populate("schedules");
   return doctors;
 };
 
@@ -26,8 +25,7 @@ const getDoctorById = async (id) => {
       $and: [{ _id: id }, { status: true }],
     })
     .populate("dept")
-    .populate("schedules")
-    .populate({ path: "rating", select: { rate: 1, _id: 0 } });
+    .populate("schedules");
 
   return doctor;
 };
@@ -90,12 +88,12 @@ const addDoctorsSchedules = async (
   day
 ) => {
   const schedule = new _Schedules({
-    doctor : doctor,
-    fromHr : fromHr,
-    fromMin : fromMin,
-    toHr : toHr,
-    toMin : toMin,
-    day : day
+    doctor: doctor,
+    fromHr: fromHr,
+    fromMin: fromMin,
+    toHr: toHr,
+    toMin: toMin,
+    day: day,
   });
   await schedule.save();
   return schedule;
@@ -127,6 +125,10 @@ const getRatings = async (id) => {
   return rating;
 };
 
+const updateAvgRatingByDoctorId = async (id, rating) => {
+  const rate = await _Doctor.findByIdAndUpdate(id, { rating: rating });
+  return rate;
+};
 module.exports = {
   getDoctors,
   deleteAllDoctors,
@@ -140,5 +142,6 @@ module.exports = {
   getDoctorByMobile,
   deleteSchedules,
   deleteAllSchedules,
-  getRatings
+  getRatings,
+  updateAvgRatingByDoctorId,
 };
