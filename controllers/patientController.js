@@ -210,9 +210,12 @@ const addRating = async (req, res, next) => {
       const reviews = await doctorService.getRatings(doctor);
       const sum = reviews.reduce((acc, review) => acc + review.rate, 0);
       const avgRating = sum / reviews.length;
+      const result = await doctorService.getDoctorById(doctor);
+      result.rating.push(review._id);
+      await result.save();
       const doctors = await doctorService.updateAvgRatingByDoctorId(doctor, avgRating);
       
-      doctors.save();
+      await doctors.save();
       res.status(200).send(Response(true, review, ""));
     } catch (err) {
       res.status(500).send(Response(false, {}, err.message));
@@ -227,6 +230,7 @@ const deleteRatingByDoctorId = async (req, res, next) => {
   } else {
     try {
       await patientService.deleteRatingsByDocId(id);
+      await doctorService.updateAvgRatingByDoctorId(id, 0);
       res.status(200).send(Response(true, {}, "Ratings deleted successfully.."));
     } catch (err) {
       res.status(500).send(Response(false, {}, err.message));
@@ -236,11 +240,16 @@ const deleteRatingByDoctorId = async (req, res, next) => {
 
 const deleteRatings = async (req, res, next) => {
   const { id } = req.params;
+  const { doctor } = req.body;
   if (!id) {
     res.status(200).send(Response(false, {}, "Missing params"));
   } else {
     try {
       await patientService.deleteRatingsById(id);
+      const reviews = await doctorService.getRatings(doctor);
+      const sum = reviews.reduce((acc, review) => acc + review.rate, 0);
+      const avgRating = sum / reviews.length;
+      await doctorService.updateAvgRatingByDoctorId(doctor, avgRating);
       res.status(200).send(Response(true, {}, "Rating deleted successfully.."));
     } catch (err) {
       res.status(500).send(Response(false, {}, err.message));

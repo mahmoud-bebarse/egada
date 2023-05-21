@@ -7,7 +7,11 @@ const getDoctors = async () => {
   const doctors = await _Doctor
     .find({ status: true })
     .populate("dept")
-    .populate("schedules");
+    .populate("schedules")
+    .populate({
+      path: "rating",
+      populate: { path: "patient", select: { name: 1, _id: 0 } },
+    });
   return doctors;
 };
 
@@ -25,7 +29,11 @@ const getDoctorById = async (id) => {
       $and: [{ _id: id }, { status: true }],
     })
     .populate("dept")
-    .populate("schedules");
+    .populate("schedules")
+    .populate({
+      path: "rating",
+      populate: { path: "patient", select: { name: 1, _id: 0 } },
+    });
 
   return doctor;
 };
@@ -126,7 +134,7 @@ const getRatings = async (id) => {
 };
 
 const updateAvgRatingByDoctorId = async (id, rating) => {
-  const rate = await _Doctor.findByIdAndUpdate(id, { rating: rating });
+  const rate = await _Doctor.findByIdAndUpdate(id, { generalRate: rating });
   return rate;
 };
 module.exports = {
