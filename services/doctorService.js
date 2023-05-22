@@ -71,7 +71,11 @@ const getDoctorsByDept = async (deptId) => {
       $and: [{ status: true }, { dept: deptId }],
     })
     .populate({ path: "dept", select: { name: 1, _id: 0 } })
-    .populate("schedules");
+    .populate("schedules")
+    .populate({
+      path: "rating",
+      populate: { path: "patient", select: { name: 1, _id: 0 } },
+    });
 
   return doctors;
 };
@@ -82,7 +86,11 @@ const getDoctorByGovern = async (govern) => {
       $and: [{ status: true }, { governorate: govern }],
     })
     .populate({ path: "dept", select: { name: 1, _id: 0 } })
-    .populate("schedules");
+    .populate("schedules")
+    .populate({
+      path: "rating",
+      populate: { path: "patient", select: { name: 1, _id: 0 } },
+    });
 
   return doctors;
 };

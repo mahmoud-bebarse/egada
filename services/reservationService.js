@@ -12,7 +12,8 @@ const getReservationById = async (id) => {
   const reservation = await _Reservation
     .findById(id, { done : false , cancelled: false})
     .populate("patient")
-    .populate("doctor");
+    .populate({
+      path: "doctor", select:({rating:0})});
 
   return reservation;
 };
@@ -59,13 +60,13 @@ const getCancelledReservationByDoctorId = async (doctorId) => {
 // get by patientId
 const getReservationByPatientId = async (patientId) => {
   const reservations = await _Reservation
-    .find({ patient: patientId, done : false , cancelled: false})
+    .find({ patient: patientId, done: false, cancelled: false })
     .select({ patient: 0 })
     .populate("schedule")
     .populate({
       path: "doctor",
       populate: "dept",
-      select: ({ schedules: 0})
+      select: { schedules: 0, rating: 0 },
     });
   return reservations;
 };
@@ -77,7 +78,7 @@ const getDoneReservationByPatientId = async (patientId) => {
     .populate({
       path: "doctor",
       populate: "dept",
-      select: { name: 1, dept: 1 },
+      select: { name: 1, dept: 1, rating:0},
     });
   return reservations;
 };
@@ -90,7 +91,7 @@ const getCancelledReservationByPatientId = async (patientId) => {
     .populate({
       path: "doctor",
       populate: "dept",
-      select: { name: 1, dept: 1 },
+      select: { name: 1, dept: 1, rating:0 },
     });
   return reservations;
 };
