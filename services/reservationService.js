@@ -66,7 +66,7 @@ const getReservationByPatientId = async (patientId) => {
     .populate({
       path: "doctor",
       populate: "dept",
-      select: { schedules: 0, rating: 0 },
+      select: ({ schedules: 0, rating: 0 }),
     });
   return reservations;
 };
@@ -78,7 +78,7 @@ const getDoneReservationByPatientId = async (patientId) => {
     .populate({
       path: "doctor",
       populate: "dept",
-      select: { name: 1, dept: 1, rating:0},
+      select: ({ name: 1, dept: 1, }),
     });
   return reservations;
 };
@@ -91,7 +91,7 @@ const getCancelledReservationByPatientId = async (patientId) => {
     .populate({
       path: "doctor",
       populate: "dept",
-      select: { name: 1, dept: 1, rating:0 },
+      select: ({ name: 1, dept: 1,  }),
     });
   return reservations;
 };
