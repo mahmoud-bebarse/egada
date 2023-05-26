@@ -1,4 +1,5 @@
 const { Response } = require("../models/response.js");
+const _Favorites = require("../models/favorites.js");
 const patientService = require("../services/patientService.js");
 const doctorService = require("../services/doctorService.js");
 const reservationService = require("../services/reservationService.js");
@@ -265,8 +266,13 @@ const favorites = async (req, res, next) => {
     res.status(200).send(Response(false, {}, "Missing data"));
   } else {
     try {
-      await patientService.addToFavorites(id, doctorId);
-      res.status(200).send(Response(true, {}, "Doctor added to favorites successfully.."));
+      const doctors = await _Favorites.find({ patient: id ,doctor: doctorId });
+      if (doctors) {
+        res.status(200).send(Response(false, {}, "Doctor already in your favorites"));
+      } else {
+        await patientService.addToFavorites(id, doctorId);
+        res.status(200).send(Response(true, {}, "Doctor added to favorites successfully.."));
+      }
     } catch (err) {
       res.status(500).send(Response(false, {}, err.message));
     }
