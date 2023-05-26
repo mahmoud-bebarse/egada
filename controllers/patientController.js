@@ -268,7 +268,8 @@ const favorites = async (req, res, next) => {
     try {
       const doctors = await _Favorites.find({ patient: id ,doctor: doctorId });
       if (doctors) {
-        res.status(200).send(Response(false, {}, "Doctor already in your favorites"));
+        await _Favorites.find({ patient: id, doctor: doctorId }).deleteMany();
+        res.status(200).send(Response(true, {}, "Doctor deleted from favorites successfully.."));
       } else {
         await patientService.addToFavorites(id, doctorId);
         res.status(200).send(Response(true, {}, "Doctor added to favorites successfully.."));
