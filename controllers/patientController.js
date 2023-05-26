@@ -256,6 +256,83 @@ const deleteRatings = async (req, res, next) => {
     }
   }
 };
+
+const favorites = async (req, res, next) => {
+  const { id } = req.params;
+  const { doctorId } = req.body;
+
+  if (!id || !doctorId) {
+    res.status(200).send(Response(false, {}, "Missing data"));
+  } else {
+    try {
+      await patientService.addToFavorites(id, doctorId);
+      res.status(200).send(Response(true, {}, "Doctor added to favorites successfully.."));
+    } catch (err) {
+      res.status(500).send(Response(false, {}, err.message));
+    }
+  }
+};
+
+const getFavorites = async (req, res, next) => {
+  const { id } = req.params;
+  if (!id) {
+    res.status(200).send(Response(false, {}, "Missing params"));
+  } else {
+    try {
+      const doctors = await patientService.getFavoriteDoctors(id);
+      if (!doctors) {
+        res.status(200).send(Response(false, {}, "Favorites is empty"));
+      } else {
+        res.status(200).send(Response(true, doctors, ""));
+      }
+    } catch (err) {
+      res.status(500).send(Response(false, {}, err.message));
+    }
+  }
+};
+
+const removeFromFavorites = async (req, res, next) => {
+  const { id } = req.params;
+
+  if (!id) {
+    res.status(200).send(Response(false, {}, "Missing params"));
+  } else {
+    try {
+      await patientService.deleteFromFavorites(id);
+      res.status(200).send(Response(true, {}, "Doctor removed from favorites successfully.."));
+    } catch (err) {
+      res.status(500).send(Response(false, {}, err.message));
+    }
+  }
+};
+
+const allFavorites = async (req, res, next) => {
+  try {
+    const doctors = await patientService.getAllFavorites();
+    if (!doctors) {
+      res.status(200).send(Response(false, {}, "there is no favorites"));
+    } else {
+      res
+        .status(200)
+        .send(
+          Response(true, doctors, "")
+        );
+    }
+   } catch (err) {
+     res.status(500).send(Response(false, {}, err.message));
+  }
+};
+
+const removeAllFavorites = async (req, res, next) => {
+  try {
+    await patientService.deleteAllFavorites();
+    res
+      .status(200)
+      .send(Response(true, {}, "Doctors removed from favorites successfully.."));
+  } catch (err) {
+    res.status(500).send(Response(false, {}, err.message));
+  }
+};
 module.exports = {
   getPatients,
   getPatientById,
@@ -270,5 +347,10 @@ module.exports = {
   deletePatients,
   addRating,
   deleteRatingByDoctorId,
-  deleteRatings
+  deleteRatings,
+  favorites,
+  getFavorites,
+  removeFromFavorites,
+  removeAllFavorites,
+  allFavorites
 };

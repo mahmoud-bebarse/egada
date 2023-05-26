@@ -1,7 +1,8 @@
 const _Patient = require("../models/patient.js");
 const _Reservation = require("../models/reservation.js");
-const _Rating = require("../models/rating.js"); 
-const { generateOtp } = require('../services/mobileAuthService.js')
+const _Rating = require("../models/rating.js");
+const _Favorites = require("../models/favorites.js");
+const { generateOtp } = require("../services/mobileAuthService.js");
 
 const getPatients = async () => {
   const patient = await _Patient.find({ status: true });
@@ -12,8 +13,7 @@ const deleteAllPatients = async () => {
   return patient;
 };
 const getPatientById = async (id) => {
-  const patient = _Patient
-    .findOne({ $and: [{ _id: id }, { status: true }] });
+  const patient = _Patient.findOne({ $and: [{ _id: id }, { status: true }] });
   return patient;
 };
 
@@ -24,10 +24,10 @@ const postPatient = async (name, mobile, dob) => {
     dob,
   });
 
-   await patient.save();
+  await patient.save();
 
   // generate OTP and send it to verify mobile
-  
+
   const result = await generateOtp(mobile);
 
   patient.otpId = result.data.otp_id;
@@ -37,7 +37,6 @@ const postPatient = async (name, mobile, dob) => {
   return patient;
 };
 
-
 const deletePatient = async (id) => {
   const res = await _Patient.findByIdAndDelete(id);
 
@@ -46,13 +45,10 @@ const deletePatient = async (id) => {
 
 const getPatientByMobile = async (mobile) => {
   const patient = await _Patient.findOne({
-    $and: [
-      { mobile: mobile },
-      { status: true }
-    ]
-  })
+    $and: [{ mobile: mobile }, { status: true }],
+  });
 
-  return patient
+  return patient;
 };
 
 const postRating = async (patient, doctor, rate, comment) => {
@@ -60,8 +56,8 @@ const postRating = async (patient, doctor, rate, comment) => {
     patient,
     doctor,
     rate,
-    comment
-  })
+    comment,
+  });
   await rating.save();
   return rating;
 };
@@ -75,6 +71,52 @@ const deleteRatingsById = async (id) => {
   const rating = await _Rating.find({ _id: id }).deleteMany();
   return rating;
 };
+
+const addToFavorites = async (patient, doctor) => {
+  const favorites = new _Favorites({
+    patient,
+    doctor,
+  });
+  await favorites.save();
+  return favorites;
+};
+
+const getFavoriteDoctors = async (patientId) => {
+  const doctor = await _Favorites
+    .find({ patient: patientId })
+    .populate({
+      path: "doctor",
+      populate: {
+        path: "rating",
+        populate: { path: "patient", select: { name: 1, _id: 0 } },
+      },
+    })
+    .populate({
+      path:"doctor",
+      populate: { path: "schedules" },
+    })
+    .populate({
+      path:"doctor",
+      populate: { path: "dept", select: { name: 1, _id: 0 } },
+    })
+    .select({ patient: 0 });
+  return doctor;
+};
+
+const deleteFromFavorites = async (id) => {
+  const doctor = await _Favorites.findByIdAndDelete(id);
+  return doctor;
+};
+
+const getAllFavorites = async () => {
+  const favorites = await _Favorites.find();
+  return favorites;
+};
+
+const deleteAllFavorites = async () => {
+  const favorites = await _Favorites.find().deleteMany();
+  return favorites;
+};
 module.exports = {
   getPatients,
   deleteAllPatients,
@@ -84,5 +126,10 @@ module.exports = {
   getPatientByMobile,
   postRating,
   deleteRatingsByDocId,
-  deleteRatingsById
+  deleteRatingsById,
+  addToFavorites,
+  getFavoriteDoctors,
+  deleteFromFavorites,
+  deleteAllFavorites,
+  getAllFavorites,
 };

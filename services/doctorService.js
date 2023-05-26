@@ -74,7 +74,7 @@ const getDoctorsByDept = async (deptId) => {
     .populate("schedules")
     .populate({
       path: "rating",
-      populate: { path: "patient", select: { name: 1, _id: 0 } },
+      populate: ({ path: "patient", select: { name: 1, _id: 0 } }),
     });
 
   return doctors;
