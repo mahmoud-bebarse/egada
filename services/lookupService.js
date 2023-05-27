@@ -1,5 +1,4 @@
 const _Dept = require("../models/dept.js");
-const { Response } = require("../models/response.js");
 
 // get depts
 const getDepts = async () => {

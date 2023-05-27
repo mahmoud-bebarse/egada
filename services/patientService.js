@@ -5,7 +5,7 @@ const _Favorites = require("../models/favorites.js");
 const { generateOtp } = require("../services/mobileAuthService.js");
 
 const getPatients = async () => {
-  const patient = await _Patient.find({ status: true });
+  const patient = await _Patient.find({ status: true }).populate("image");
   return patient;
 };
 const deleteAllPatients = async () => {
@@ -13,15 +13,18 @@ const deleteAllPatients = async () => {
   return patient;
 };
 const getPatientById = async (id) => {
-  const patient = _Patient.findOne({ $and: [{ _id: id }, { status: true }] });
+  const patient = _Patient
+    .findOne({ $and: [{ _id: id }, { status: true }] })
+    .populate("image");
   return patient;
 };
 
-const postPatient = async (name, mobile, dob) => {
+const postPatient = async (name, mobile, dob, imgId) => {
   const patient = new _Patient({
     name,
     mobile,
     dob,
+    profileImg: imgId
   });
 
   await patient.save();
@@ -92,11 +95,11 @@ const getFavoriteDoctors = async (patientId) => {
       },
     })
     .populate({
-      path:"doctor",
+      path: "doctor",
       populate: { path: "schedules" },
     })
     .populate({
-      path:"doctor",
+      path: "doctor",
       populate: { path: "dept", select: { name: 1, _id: 0 } },
     })
     .select({ patient: 0 });

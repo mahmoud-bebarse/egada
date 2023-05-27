@@ -19,7 +19,13 @@ const doctorSchema = new mongoose.Schema({
     ref: "rating",
     required: false,
   },
+  inFavorites: { type: Boolean, default: false },
   governorate: { type: String, required: true, trim: true },
+  profileImg: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "image",
+    required: false,
+  },
   otpId: { type: String, trim: true },
   status: { type: Boolean, default: true },
   entryDate: { type: Date, default: Date.now },

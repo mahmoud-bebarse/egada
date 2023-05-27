@@ -15,6 +15,7 @@ const patientRouter = require("./routes/patient");
 const doctorRouter = require("./routes/doctor");
 const lookupRouter = require("./routes/lookup");
 const reservationRouter = require("./routes/reservation");
+const imageRouter = require("./routes/image");
 
 // defining the Express app
 const app = express();
@@ -50,6 +51,7 @@ app.use("/doctor", doctorRouter);
 app.use("/patient", patientRouter);
 app.use("/reservation", reservationRouter);
 app.use("/lookup", lookupRouter);
+app.use("/image", imageRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
@@ -69,6 +71,7 @@ app.use(function (err, req, res, next) {
 
 // path for images
 app.get("/file/:filename", (req, res) => {
+  console.log(req);
   res.sendFile(path.join(__dirname, `./public/uploads/${req.params.filename}`));
 });
 

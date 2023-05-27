@@ -155,7 +155,7 @@ const getCancelledRservations = async (req, res, next) => {
 
 // post doctor
 const postDoctor = async (req, res, next) => {
-  const { name, mobile, dept, address, fee, desc, govern } = req.body;
+  const { name, mobile, dept, address, fee, desc, govern, imgId } = req.body;
 
   // validation
   if (!name || !mobile || !dept || !address || !fee || !desc || !govern) {
@@ -179,7 +179,8 @@ const postDoctor = async (req, res, next) => {
         address,
         fee,
         desc,
-        govern
+        govern,
+        imgId
       );
       res.status(200).send(Response(true, { result }, "OTP sent successfully"));
     } catch (err) {

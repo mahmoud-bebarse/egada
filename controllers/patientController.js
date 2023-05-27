@@ -1,5 +1,6 @@
 const { Response } = require("../models/response.js");
 const _Favorites = require("../models/favorites.js");
+const _Doctor = require("../models/doctor.js");
 const patientService = require("../services/patientService.js");
 const doctorService = require("../services/doctorService.js");
 const reservationService = require("../services/reservationService.js");
@@ -106,7 +107,7 @@ const getCancelledRservations = async (req, res, next) => {
 };
 // post patient
 const postPatient = async (req, res, next) => {
-  const { name, mobile, dob } = req.body;
+  const { name, mobile, dob, imgId } = req.body;
 
   // validation
   if (!name && !mobile && !dob) {
@@ -122,7 +123,7 @@ const postPatient = async (req, res, next) => {
   } else {
     // post
     try {
-      const result = await patientService.postPatient(name, mobile, dob);
+      const result = await patientService.postPatient(name, mobile, dob, imgId);
       res.status(200).send(Response(true, result, "OTP sent seccessfully"));
     } catch (err) {
       res.status(500).send(Response(false, {}, err.message));
@@ -144,7 +145,7 @@ const patientLogin = async (req, res, next) => {
   //generating otp
   const result = await generateOtp(mobile);
   found.otpId = result.data.otp_id;
-  found.save();
+  await found.save();
 
   res.status(200).send(Response(true, found._id, "OTP sent successfully .. "));
 };
@@ -173,10 +174,10 @@ const verifyPatientOtp = async (req, res, next) => {
   const patient = await patientService.getPatientByMobile(mobile);
 
   //verify otpCode
-  verifyOtp(patient.otpId, otpCode).then((result) => {
+  verifyOtp(patient.otpId, otpCode).then(async (result) => {
     if (result.data.status === "APPROVED") {
       patient.isVerified = true;
-      patient.save();
+      await patient.save();
 
       res.status(200).send(Response(true, patient, "Verified successfully"));
     } else {
@@ -214,8 +215,11 @@ const addRating = async (req, res, next) => {
       const result = await doctorService.getDoctorById(doctor);
       result.rating.push(review._id);
       await result.save();
-      const doctors = await doctorService.updateAvgRatingByDoctorId(doctor, avgRating);
-      
+      const doctors = await doctorService.updateAvgRatingByDoctorId(
+        doctor,
+        avgRating
+      );
+
       await doctors.save();
       res.status(200).send(Response(true, review, ""));
     } catch (err) {
@@ -232,7 +236,9 @@ const deleteRatingByDoctorId = async (req, res, next) => {
     try {
       await patientService.deleteRatingsByDocId(id);
       await doctorService.updateAvgRatingByDoctorId(id, 0);
-      res.status(200).send(Response(true, {}, "Ratings deleted successfully.."));
+      res
+        .status(200)
+        .send(Response(true, {}, "Ratings deleted successfully.."));
     } catch (err) {
       res.status(500).send(Response(false, {}, err.message));
     }
@@ -270,10 +276,18 @@ const favorites = async (req, res, next) => {
       console.log(doctors);
       if (doctors.length != 0) {
         await _Favorites.find({ patient: id, doctor: doctorId }).deleteMany();
-        res.status(200).send(Response(true, {}, "Doctor deleted from favorites successfully.."));
+        await _Doctor.findByIdAndUpdate(doctorId, { inFavorites: true });
+        res
+          .status(200)
+          .send(
+            Response(true, {}, "Doctor deleted from favorites successfully..")
+          );
       } else {
         await patientService.addToFavorites(id, doctorId);
-        res.status(200).send(Response(true, {}, "Doctor added to favorites successfully.."));
+        await _Doctor.findByIdAndUpdate(doctorId, { inFavorites: false });
+        res
+          .status(200)
+          .send(Response(true, {}, "Doctor added to favorites successfully.."));
       }
     } catch (err) {
       res.status(500).send(Response(false, {}, err.message));
@@ -301,13 +315,18 @@ const getFavorites = async (req, res, next) => {
 
 const removeFromFavorites = async (req, res, next) => {
   const { id } = req.params;
-
+  const { doctorId } = req.body;
   if (!id) {
     res.status(200).send(Response(false, {}, "Missing params"));
   } else {
     try {
       await patientService.deleteFromFavorites(id);
-      res.status(200).send(Response(true, {}, "Doctor removed from favorites successfully.."));
+      await _Doctor.findByIdAndUpdate(doctorId, { inFavorites: false });
+      res
+        .status(200)
+        .send(
+          Response(true, {}, "Doctor removed from favorites successfully..")
+        );
     } catch (err) {
       res.status(500).send(Response(false, {}, err.message));
     }
@@ -320,23 +339,22 @@ const allFavorites = async (req, res, next) => {
     if (!doctors) {
       res.status(200).send(Response(false, {}, "there is no favorites"));
     } else {
-      res
-        .status(200)
-        .send(
-          Response(true, doctors, "")
-        );
+      res.status(200).send(Response(true, doctors, ""));
     }
-   } catch (err) {
-     res.status(500).send(Response(false, {}, err.message));
+  } catch (err) {
+    res.status(500).send(Response(false, {}, err.message));
   }
 };
 
 const removeAllFavorites = async (req, res, next) => {
   try {
     await patientService.deleteAllFavorites();
+    await _Doctor.find().updateMany({ inFavorites: false });
     res
       .status(200)
-      .send(Response(true, {}, "Doctors removed from favorites successfully.."));
+      .send(
+        Response(true, {}, "Doctors removed from favorites successfully..")
+      );
   } catch (err) {
     res.status(500).send(Response(false, {}, err.message));
   }
@@ -360,5 +378,5 @@ module.exports = {
   getFavorites,
   removeFromFavorites,
   removeAllFavorites,
-  allFavorites
+  allFavorites,
 };

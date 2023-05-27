@@ -7,17 +7,18 @@ const config = require("../config/db.json")[env];
 
 const { _DBNAME, _PASSWORD, _USERNAME, _INSTANCE } = config;
 
-const db = mongoose.connect(
+const db = mongoose
+  .connect(
     `mongodb+srv://${_USERNAME}:${_PASSWORD}@${_INSTANCE}.mongodb.net/${_DBNAME}?w=majority`,
     {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-        retryWrites: true
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+      retryWrites: true,
     }
-)
-.then(() => console.log('Connected to #bombya_db!'))
-.catch((err) => {
-    console.log(err)
-})
+  )
+  .then(() => console.log("Connected to #db!"))
+  .catch((err) => {
+    console.log(err);
+  });
 
 exports.db = db;

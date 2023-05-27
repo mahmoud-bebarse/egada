@@ -11,7 +11,8 @@ const getDoctors = async () => {
     .populate({
       path: "rating",
       populate: { path: "patient", select: { name: 1, _id: 0 } },
-    });
+    })
+    .populate("image");
   return doctors;
 };
 
@@ -33,12 +34,13 @@ const getDoctorById = async (id) => {
     .populate({
       path: "rating",
       populate: { path: "patient", select: { name: 1, _id: 0 } },
-    });
+    })
+    .populate("image");
 
   return doctor;
 };
 
-const postDoctor = async (name, mobile, dept, address, fee, desc, govern) => {
+const postDoctor = async (name, mobile, dept, address, fee, desc, govern, imgId) => {
   const doctor = new _Doctor({
     name,
     mobile,
@@ -47,6 +49,7 @@ const postDoctor = async (name, mobile, dept, address, fee, desc, govern) => {
     fee,
     desc,
     governorate: govern,
+    profileImg: imgId
   });
 
   await doctor.save();
