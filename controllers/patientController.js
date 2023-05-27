@@ -266,8 +266,9 @@ const favorites = async (req, res, next) => {
     res.status(200).send(Response(false, {}, "Missing data"));
   } else {
     try {
-      const doctors = await _Favorites.find({ patient: id ,doctor: doctorId });
-      if (doctors) {
+      const doctors = await _Favorites.find({ patient: id, doctor: doctorId });
+      console.log(doctors);
+      if (doctors.length != 0) {
         await _Favorites.find({ patient: id, doctor: doctorId }).deleteMany();
         res.status(200).send(Response(true, {}, "Doctor deleted from favorites successfully.."));
       } else {
@@ -287,7 +288,7 @@ const getFavorites = async (req, res, next) => {
   } else {
     try {
       const doctors = await patientService.getFavoriteDoctors(id);
-      if (!doctors) {
+      if (doctors.length == 0) {
         res.status(200).send(Response(false, {}, "Favorites is empty"));
       } else {
         res.status(200).send(Response(true, doctors, ""));
