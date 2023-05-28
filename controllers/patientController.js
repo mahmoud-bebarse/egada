@@ -303,7 +303,7 @@ const getFavorites = async (req, res, next) => {
     try {
       const doctors = await patientService.getFavoriteDoctors(id);
       if (doctors.length == 0) {
-        res.status(200).send(Response(false, {}, "Favorites is empty"));
+        res.status(200).send(Response(false, [], "Favorites is empty"));
       } else {
         res.status(200).send(Response(true, doctors, ""));
       }
