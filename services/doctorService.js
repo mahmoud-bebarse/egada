@@ -12,7 +12,7 @@ const getDoctors = async () => {
       path: "rating",
       populate: { path: "patient", select: { name: 1, _id: 0 } },
     })
-    .populate("image");
+    .populate("profileImg");
   return doctors;
 };
 
@@ -35,7 +35,7 @@ const getDoctorById = async (id) => {
       path: "rating",
       populate: { path: "patient", select: { name: 1, _id: 0 } },
     })
-    .populate("image");
+    .populate("profileImg");
 
   return doctor;
 };
@@ -77,8 +77,9 @@ const getDoctorsByDept = async (deptId) => {
     .populate("schedules")
     .populate({
       path: "rating",
-      populate: ({ path: "patient", select: { name: 1, _id: 0 } }),
-    });
+      populate: { path: "patient", select: { name: 1, _id: 0 } },
+    })
+    .populate("profileImg");
 
   return doctors;
 };

@@ -276,7 +276,7 @@ const favorites = async (req, res, next) => {
       console.log(doctors);
       if (doctors.length != 0) {
         await _Favorites.find({ patient: id, doctor: doctorId }).deleteMany();
-        await _Doctor.findByIdAndUpdate(doctorId, { inFavorites: true });
+        await _Doctor.findByIdAndUpdate(doctorId, { inFavorites: false });
         res
           .status(200)
           .send(
@@ -284,7 +284,7 @@ const favorites = async (req, res, next) => {
           );
       } else {
         await patientService.addToFavorites(id, doctorId);
-        await _Doctor.findByIdAndUpdate(doctorId, { inFavorites: false });
+        await _Doctor.findByIdAndUpdate(doctorId, { inFavorites: true });
         res
           .status(200)
           .send(Response(true, {}, "Doctor added to favorites successfully.."));

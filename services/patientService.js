@@ -106,7 +106,7 @@ const getFavoriteDoctors = async (patientId) => {
   return doctor;
 };
 
-const deleteFromFavorites = async (id) => {
+const deleteFromFavorites = async (id, doctorId) => {
   const doctor = await _Favorites.findByIdAndDelete(id);
   return doctor;
 };
