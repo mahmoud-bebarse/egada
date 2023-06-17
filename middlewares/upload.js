@@ -1,11 +1,8 @@
 const path = require("path");
 const multer = require("multer");
-// const { fileURLToPath } = require("url");
 
-// const _filename = fileURLToPath(import.meta.url);
-console.log("__filename", __filename);
 const _dirname = path.dirname(__filename);
-console.log(_dirname);
+
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, path.join(_dirname, "../public/uploads"));
