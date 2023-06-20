@@ -3,12 +3,12 @@ const { Response } = require("../models/response.js");
 const questionAnswerService = require("../services/questionAnswerService.js");
 
 const postQuestion = async (req, res, next) => {
-  const { patientId, question } = req.body;
-  if (!patientId || !question) {
+  const { patientId, deptId, age, gender, title, desc} = req.body;
+  if (!patientId || !deptId || !age || !gender || !title || !desc) {
     res.status(200).send(Response(false, {}, "Missing data"));
   } else {
     try {
-      const quest = await questionAnswerService.postQuestion(patientId, question);
+      const quest = await questionAnswerService.postQuestion(patientId, deptId, age, gender, title, desc);
       res
         .status(200)
         .send(
@@ -27,6 +27,32 @@ const getQuestion = async (req, res, next) => {
   } else {
     try {
       const question = await questionAnswerService.getQuestion(id);
+      res.status(200).send(Response(true, question, ""));
+    } catch (err) {
+      res.status(500).send(Response(false, {}, err.message));
+    }
+  }
+};
+const getQuestionByPatientId = async (req, res, next) => {
+  const { id } = req.params;
+  if (!id) {
+    res.status(200).send(Response(false, {}, "Missing params"));
+  } else {
+    try {
+      const question = await questionAnswerService.getQuestionsByPatientId(id)
+      res.status(200).send(Response(true, question, ""));
+    } catch (err) {
+      res.status(500).send(Response(false, {}, err.message));
+    }
+  }
+};
+const getQuestionByDeptId = async (req, res, next) => {
+  const { id } = req.params;
+  if (!id) {
+    res.status(200).send(Response(false, {}, "Missing params"));
+  } else {
+    try {
+      const question = await questionAnswerService.getQuestionsByDeptId(id);
       res.status(200).send(Response(true, question, ""));
     } catch (err) {
       res.status(500).send(Response(false, {}, err.message));
@@ -53,13 +79,20 @@ const getAllAnswers = async (req, res, next) => {
 };
 
 const putQuestion = async (req, res, next) => {
-  const { question } = req.body;
+  const { deptId, age, gender, title, desc } = req.body;
   const { id } = req.params;
   if (!id || !question) {
     res.status(200).send(Response(false, {}, "Missing data"));
   } else {
     try {
-      const Q = await questionAnswerService.putQuestion(id, question);
+      const Q = await questionAnswerService.putQuestion(
+        id,
+        deptId,
+        age,
+        gender,
+        title,
+        desc
+      );
       res.status(200).send(Response(true, {}, "Question have been updated successfully"));
     } catch (err) {
       res.status(500).send(Response(false, {}, err.message));
@@ -142,4 +175,6 @@ module.exports = {
   postAnswer,
   putAnswer,
   deleteAnswer,
+  getQuestionByDeptId,
+  getQuestionByPatientId
 };

@@ -11,6 +11,8 @@ router.delete("/:id", questionsController.deleteQuestion);
 router.delete("/answer/:id", questionsController.deleteAnswer);
 router.get("/:id", questionsController.getQuestion);
 router.get("/get/all", questionsController.getAllQuestions);
+router.get("/get/patient/:id", questionsController.getQuestionByPatientId);
+router.get("/get/dept/:id", questionsController.getQuestionByDeptId);
 router.get("/answer/get/all", questionsController.getAllAnswers);
 
 

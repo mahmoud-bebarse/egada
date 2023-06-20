@@ -6,7 +6,15 @@ const questionSchema = new mongoose.Schema({
     ref: "patient",
     required: true,
   },
-  question: { type: String, required: true, trim: true },
+  deptId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "dept",
+    required: true,
+  },
+  age: { type: Number, required: true },
+  gender: { type: String, required: true, trim: true },
+  title: { type: String, required: true, trim: true, maxLength: 50 },
+  desc: { type: String, required: true, trim: true, maxLength: 250 },
   answer: {
     type: [mongoose.Schema.Types.ObjectId],
     ref: "answer",
@@ -18,4 +26,4 @@ const questionSchema = new mongoose.Schema({
 
 const Question = mongoose.model("question", questionSchema);
 
-module.exports = Question ;
+module.exports = Question;
