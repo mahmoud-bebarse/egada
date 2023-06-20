@@ -84,12 +84,12 @@ const deleteQuestion = async (req, res, next) => {
 };
 
 const postAnswer = async (req, res, next) => {
-  const { doctorId, ans, to } = req.body;
-  if (!doctorId || !ans || !to) {
+  const { doctorId, ans, questionId } = req.body;
+  if (!doctorId || !ans || !questionId) {
     res.status(200).send(Response(false, {}, "Missing data"));
   } else {
     try {
-      const answer = await questionAnswerService.postAnswer(doctorId, ans, to);
+      const answer = await questionAnswerService.postAnswer(doctorId, ans, questionId);
       res
         .status(200)
         .send(Response(true, answer, "answer have been added successfully"));

@@ -1,9 +1,9 @@
 const _Question = require("../models/question");
 const _Answer = require("../models/answer");
 
-const postQuestion = async (userId, question) => {
+const postQuestion = async (patientId, question) => {
   const Q = new _Question({
-    userId,
+    patientId,
     question,
   });
   await Q.save();
@@ -76,14 +76,14 @@ const deleteQuestion = async (id) => {
 };
 
 
-const postAnswer = async (doctorId, ans, to) => {
+const postAnswer = async (doctorId, ans, questionId) => {
   const A = new _Answer({
     doctorId,
     answer: ans,
   });
   await A.save();
-  const question = await _Question.findOne({ patientId: to });
-  await question.answer.push(A._id);
+  const question = await _Question.findOne({ _id : questionId });
+  question.answer.push(A._id);
   await question.save();
   return A;
 };
