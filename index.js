@@ -16,6 +16,7 @@ const doctorRouter = require("./routes/doctor");
 const lookupRouter = require("./routes/lookup");
 const reservationRouter = require("./routes/reservation");
 const imageRouter = require("./routes/image");
+const questionsRouter = require("./routes/questions");
 
 // defining the Express app
 const app = express();
@@ -52,6 +53,7 @@ app.use("/patient", patientRouter);
 app.use("/reservation", reservationRouter);
 app.use("/lookup", lookupRouter);
 app.use("/image", imageRouter);
+app.use("/questions", questionsRouter)
 
 // path for images
 // app.get("/file/:filename", (req, res) => {

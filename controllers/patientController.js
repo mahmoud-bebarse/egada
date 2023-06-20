@@ -349,7 +349,6 @@ const allFavorites = async (req, res, next) => {
 const removeAllFavorites = async (req, res, next) => {
   try {
     await patientService.deleteAllFavorites();
-    await _Doctor.find().updateMany({ inFavorites: false });
     res
       .status(200)
       .send(

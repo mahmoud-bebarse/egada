@@ -8,6 +8,7 @@ const {
 } = require("../services/mobileAuthService.js");
 const reservationService = require("../services/reservationService.js");
 const _Schedules = require("../models/schedule.js");
+const _Favorites = require("../models/favorites.js");
 
 // get doctors
 const getDoctors = async (req, res, next) => {
@@ -24,6 +25,7 @@ const deleteDoctors = async (req, res, next) => {
     await doctorService.deleteAllDoctors();
     await reservationService.deleteAllReservations();
     await doctorService.deleteAllSchedules();
+    await patientService.deleteAllFavorites();
     res
       .status(200)
       .send(Response(true, {}, "all doctors has been deleted successfully"));
@@ -222,6 +224,7 @@ const deleteDoctor = async (req, res, next) => {
     await doctorService.deleteDoctor(id);
     await reservationService.deleteReservationByDoctorId(id);
     await doctorService.deleteSchedules(id);
+    await _Favorites.find({ doctor: id }).deleteMany();
     res.status(200).send(Response(true, {}, "Doctor deleted successfully.."));
   } catch (err) {
     res.status(500).send(Response(false, {}, err.message));
