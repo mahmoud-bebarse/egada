@@ -3,12 +3,12 @@ const { Response } = require("../models/response.js");
 const questionAnswerService = require("../services/questionAnswerService.js");
 
 const postQuestion = async (req, res, next) => {
-  const { userId, question } = req.body;
-  if (!userId || !question) {
+  const { patientId, question } = req.body;
+  if (!patientId || !question) {
     res.status(200).send(Response(false, {}, "Missing data"));
   } else {
     try {
-      const quest = await questionAnswerService.postQuestion(userId, question);
+      const quest = await questionAnswerService.postQuestion(patientId, question);
       res
         .status(200)
         .send(
@@ -84,12 +84,12 @@ const deleteQuestion = async (req, res, next) => {
 };
 
 const postAnswer = async (req, res, next) => {
-  const { userId, ans, to } = req.body;
-  if (!userId || !ans || !to) {
+  const { doctorId, ans, to } = req.body;
+  if (!doctorId || !ans || !to) {
     res.status(200).send(Response(false, {}, "Missing data"));
   } else {
     try {
-      const answer = await questionAnswerService.postAnswer(userId, ans, to);
+      const answer = await questionAnswerService.postAnswer(doctorId, ans, to);
       res
         .status(200)
         .send(Response(true, answer, "answer have been added successfully"));

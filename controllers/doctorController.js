@@ -10,7 +10,7 @@ const reservationService = require("../services/reservationService.js");
 const _Schedules = require("../models/schedule.js");
 const _Favorites = require("../models/favorites.js");
 const _Answer = require("../models/answer.js");
-
+const _Rating = require("../models/rating.js");
 // get doctors
 const getDoctors = async (req, res, next) => {
   const doctors = await doctorService.getDoctors();
@@ -28,6 +28,7 @@ const deleteDoctors = async (req, res, next) => {
     await doctorService.deleteAllSchedules();
     await patientService.deleteAllFavorites();
     await _Answer.find().deleteMany();
+    await _Rating.find().deleteMany();
     res
       .status(200)
       .send(Response(true, {}, "all doctors has been deleted successfully"));
@@ -227,7 +228,8 @@ const deleteDoctor = async (req, res, next) => {
     await reservationService.deleteReservationByDoctorId(id);
     await doctorService.deleteSchedules(id);
     await _Favorites.find({ doctor: id }).deleteMany();
-    await _Answer.find({userId: id}).deleteMany()
+    await _Answer.find({ doctorId: id }).deleteMany()
+    await _Rating.find({ doctor: id }).deleteMany();
     res.status(200).send(Response(true, {}, "Doctor deleted successfully.."));
   } catch (err) {
     res.status(500).send(Response(false, {}, err.message));

@@ -14,14 +14,14 @@ const getQuestion = async (id) => {
   const question = await _Question
     .findById(id)
     .populate({
-      path: "userId",
+      path: "patientId",
       select: { name: 1, _id: 1, profileImg: 1 },
       populate: "profileImg",
     })
     .populate({
       path: "answer",
       populate: {
-        path: "userId",
+        path: "doctorId",
         select: { name: 1, _id: 1, profileImg: 1 },
         populate: "profileImg",
       },
@@ -34,14 +34,14 @@ const getAllQuestions = async () => {
   const question = await _Question
     .find()
     .populate({
-      path: "userId",
+      path: "patientId",
       select: { name: 1, _id: 1, profileImg: 1 },
       populate: "profileImg",
     })
     .populate({
       path: "answer",
       populate: {
-        path: "userId",
+        path: "doctorId",
         select: { name: 1, _id: 1, profileImg: 1 },
         populate: "profileImg",
       },
@@ -53,7 +53,7 @@ const getAllAnswers = async () => {
     const answer = await _Answer
     .find()
     .populate({
-      path: "userId",
+      path: "doctorId",
       select: { name: 1, _id: 1, profileImg: 1 },
       populate: "profileImg",
     });
@@ -76,13 +76,13 @@ const deleteQuestion = async (id) => {
 };
 
 
-const postAnswer = async (userId, ans, to) => {
+const postAnswer = async (doctorId, ans, to) => {
   const A = new _Answer({
-    userId,
+    doctorId,
     answer: ans,
   });
   await A.save();
-  const question = await _Question.findOne({ userId: to });
+  const question = await _Question.findOne({ patientId: to });
   await question.answer.push(A._id);
   await question.save();
   return A;

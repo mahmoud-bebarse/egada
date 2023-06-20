@@ -1,6 +1,7 @@
 const { Response } = require("../models/response.js");
 const _Favorites = require("../models/favorites.js");
 const _Doctor = require("../models/doctor.js");
+const _Question = require("../models/question.js");
 const patientService = require("../services/patientService.js");
 const doctorService = require("../services/doctorService.js");
 const reservationService = require("../services/reservationService.js");
@@ -28,6 +29,8 @@ const deletePatients = async (req, res, next) => {
   try {
     await patientService.deleteAllPatients();
     await reservationService.deleteAllReservations();
+    await _Favorites.find().deleteMany();
+    await _Question.find().deleteMany();
     res
       .status(200)
       .send(Response(true, {}, "All patients has been deleted successfully"));
@@ -162,6 +165,8 @@ const deletePatient = async (req, res, next) => {
   try {
     await patientService.deletePatient(id);
     await reservationService.deleteReservationByPatientId(id);
+    await _Favorites.find({ patient: id }).deleteMany();
+    await _Question.find({ patientId: id }).deleteMany();
     res.status(200).send(Response(true, {}, "Patient deleted succssefully.."));
   } catch (err) {
     res.status(500).send(Response(false, {}, err.message));
