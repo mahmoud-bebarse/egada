@@ -10,9 +10,13 @@ router.get("/dept/:id", doctorController.getDoctorsByDept);
 router.get("/govern/get", doctorController.getDoctorsByGovern);
 router.get("/reservations/:id", doctorController.getRservations);
 router.get("/doneReservations/:id", doctorController.getDoneRservations);
-router.get("/cancelledReservations/:id", doctorController.getCancelledRservations);
+router.get(
+  "/cancelledReservations/:id",
+  doctorController.getCancelledRservations
+);
 router.post("/", doctorController.postDoctor);
 router.post("/logIn", doctorController.doctorLogin);
+router.put("/update/:id", doctorController.putDoctor);
 router.delete("/delete/:id", doctorController.deleteDoctor);
 router.delete("/deleteAll", doctorController.deleteDoctors);
 router.delete("/schedules/delete/:id", doctorController.deleteSchedules);

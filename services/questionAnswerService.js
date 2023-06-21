@@ -14,6 +14,17 @@ const postQuestion = async (patientId, deptId, age, gender, title, desc) => {
   return Q;
 };
 
+const putQuestion = async (id, deptId, age, gender, title, desc) => {
+  const Q = await _Question.findByIdAndUpdate(id, {
+    deptId,
+    age,
+    gender,
+    title,
+    desc,
+  });
+  return Q;
+};
+
 const getQuestion = async (id) => {
   const question = await _Question
     .findById(id)
@@ -87,26 +98,6 @@ const getQuestionsByPatientId = async (id) => {
   return question;
 };
 
-const getAllAnswers = async () => {
-  const answer = await _Answer.find().populate({
-    path: "doctorId",
-    select: { name: 1, _id: 1, profileImg: 1 },
-    populate: "profileImg",
-  });
-  return answer;
-};
-
-const putQuestion = async (id, deptId, age, gender, title, desc) => {
-  const Q = await _Question.findByIdAndUpdate(id, {
-    deptId,
-    age,
-    gender,
-    title,
-    desc,
-  });
-  return Q;
-};
-
 const deleteQuestion = async (id) => {
   const Q = await _Question.findById(id);
   Q.answer.forEach(async (item) => {
@@ -132,6 +123,15 @@ const postAnswer = async (doctorId, ans, questionId) => {
 const putAnswer = async (id, answer) => {
   const A = await _Answer.findByIdAndUpdate(id, { answer });
   return A;
+};
+
+const getAllAnswers = async () => {
+  const answer = await _Answer.find().populate({
+    path: "doctorId",
+    select: { name: 1, _id: 1, profileImg: 1 },
+    populate: "profileImg",
+  });
+  return answer;
 };
 
 const deleteAnswer = async (id) => {

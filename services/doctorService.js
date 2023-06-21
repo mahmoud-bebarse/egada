@@ -3,6 +3,63 @@ const _Schedules = require("../models/schedule.js");
 const _Rating = require("../models/rating.js");
 const { generateOtp } = require("../services/mobileAuthService.js");
 
+const postDoctor = async (
+  name,
+  mobile,
+  dept,
+  address,
+  fee,
+  desc,
+  govern,
+  imgId
+) => {
+  const doctor = new _Doctor({
+    name,
+    mobile,
+    dept,
+    address,
+    fee,
+    desc,
+    governorate: govern,
+    profileImg: imgId,
+  });
+
+  await doctor.save();
+
+  const result = await generateOtp(mobile);
+
+  doctor.otpId = result.data.otp_id;
+  await doctor.save();
+
+  return doctor;
+};
+
+const putDoctor = async (
+  id,
+  name,
+  mobile,
+  dept,
+  address,
+  fee,
+  desc,
+  govern,
+  imgId
+) => {
+  const doctor = await _Doctor.findByIdAndUpdate(id, {
+    name,
+    mobile,
+    dept,
+    address,
+    fee,
+    desc,
+    govern,
+    imgId,
+  });
+
+  await doctor.save();
+  return doctor;
+};
+
 const getDoctors = async () => {
   const doctors = await _Doctor
     .find({ status: true })
@@ -16,14 +73,6 @@ const getDoctors = async () => {
   return doctors;
 };
 
-const deleteAllDoctors = async () => {
-  const doctor = await _Doctor.find().deleteMany();
-  return doctor;
-};
-const deleteAllSchedules = async () => {
-  const schedule = await _Schedules.find().deleteMany();
-  return schedule;
-};
 const getDoctorById = async (id) => {
   const doctor = await _Doctor
     .findOne({
@@ -40,32 +89,9 @@ const getDoctorById = async (id) => {
   return doctor;
 };
 
-const postDoctor = async (name, mobile, dept, address, fee, desc, govern, imgId) => {
-  const doctor = new _Doctor({
-    name,
-    mobile,
-    dept,
-    address,
-    fee,
-    desc,
-    governorate: govern,
-    profileImg: imgId
-  });
-
-  await doctor.save();
-
-  const result = await generateOtp(mobile);
-
-  doctor.otpId = result.data.otp_id;
-  await doctor.save();
-
+const deleteAllDoctors = async () => {
+  const doctor = await _Doctor.find().deleteMany();
   return doctor;
-};
-
-const deleteDoctor = async (id) => {
-  const res = await _Doctor.findByIdAndDelete(id);
-
-  return res;
 };
 
 const getDoctorsByDept = async (deptId) => {
@@ -99,6 +125,20 @@ const getDoctorByGovern = async (govern) => {
   return doctors;
 };
 
+const getDoctorByMobile = async (mobile) => {
+  const doctor = await _Doctor.findOne({
+    $and: [{ mobile: mobile }, { status: true }],
+  });
+
+  return doctor;
+};
+
+const deleteDoctor = async (id) => {
+  const res = await _Doctor.findByIdAndDelete(id);
+
+  return res;
+};
+
 const addDoctorsSchedules = async (
   doctor,
   fromHr,
@@ -119,12 +159,9 @@ const addDoctorsSchedules = async (
   return schedule;
 };
 
-const getDoctorByMobile = async (mobile) => {
-  const doctor = await _Doctor.findOne({
-    $and: [{ mobile: mobile }, { status: true }],
-  });
-
-  return doctor;
+const deleteAllSchedules = async () => {
+  const schedule = await _Schedules.find().deleteMany();
+  return schedule;
 };
 
 const getSchedulesByDoctorId = async (id) => {
@@ -137,6 +174,7 @@ const deleteSchedules = async (id) => {
   const schedule = await _Schedules.find({ doctor: id }).deleteMany();
   return schedule;
 };
+
 const getRatings = async (id) => {
   const rating = await _Rating
     .find({ doctor: id })
@@ -154,6 +192,7 @@ module.exports = {
   deleteAllDoctors,
   getDoctorById,
   postDoctor,
+  putDoctor,
   deleteDoctor,
   getDoctorsByDept,
   getDoctorByGovern,

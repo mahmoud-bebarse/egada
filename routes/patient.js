@@ -9,6 +9,7 @@ router.get("/reservations/:id", patientController.getRservations);
 router.get("/doneReservations/:id", patientController.getDoneRservations);
 router.get("/cancelledReservations/:id", patientController.getCancelledRservations);
 router.post("/", patientController.postPatient);
+router.put("/update/:id", patientController.putPatient);
 router.post("/logIn", patientController.patientLogin);
 router.delete("/delete/:id", patientController.deletePatient);
 router.delete("/deleteAll", patientController.deletePatients)

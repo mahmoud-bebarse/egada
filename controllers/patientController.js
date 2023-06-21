@@ -11,6 +11,134 @@ const {
   generateOtp,
 } = require("../services/mobileAuthService.js");
 
+// post patient
+const postPatient = async (req, res, next) => {
+  const { name, mobile, dob, imgId } = req.body;
+
+  // validation
+  if (!name && !mobile && !dob) {
+    res.status(200).send(Response(false, {}, "Missing data"));
+  }
+  // checking if mobile already exists
+  const find = await patientService.getPatientByMobile(mobile);
+  const found = await doctorService.getDoctorByMobile(mobile);
+  if (find || found) {
+    res
+      .status(200)
+      .send(Response(false, {}, "This mobile number already exists"));
+  } else {
+    // post
+    try {
+      const result = await patientService.postPatient(name, mobile, dob, imgId);
+      res.status(200).send(Response(true, result, "OTP sent seccessfully"));
+    } catch (err) {
+      res.status(500).send(Response(false, {}, err.message));
+    }
+  }
+};
+
+// Log in
+const patientLogin = async (req, res, next) => {
+  const { mobile } = req.body;
+  // validation
+  if (!mobile) {
+    res.status(200).send(Response(false, {}, "Missing data"));
+  } else {
+    try {
+      const found = await patientService.getPatientByMobile(mobile);
+      if (!found) {
+        res
+          .status(200)
+          .send(
+            Response(false, "", "There is no patient with this mobile number")
+          );
+      } else {
+        //generating otp
+        const result = await generateOtp(mobile);
+        found.otpId = result.data.otp_id;
+        await found.save();
+
+        res
+          .status(200)
+          .send(Response(true, found._id, "OTP sent successfully .. "));
+      }
+    } catch (err) {
+      res.status(500).send(Response(false, {}, err.message));
+    }
+  }
+};
+
+const verifyPatientOtp = async (req, res, next) => {
+  const { mobile, otpCode } = req.body;
+
+  const patient = await patientService.getPatientByMobile(mobile);
+
+  //verify otpCode
+  verifyOtp(patient.otpId, otpCode).then(async (result) => {
+    if (result.data.status === "APPROVED") {
+      patient.isVerified = true;
+      await patient.save();
+
+      res.status(200).send(Response(true, patient, "Verified successfully"));
+    } else {
+      res.status(200).send(Response(false, {}, "invalid otp"));
+    }
+  });
+};
+
+const resendPatientOtp = async (req, res, next) => {
+  const { mobile } = req.body;
+
+  const patient = await patientService.getPatientByMobile(mobile);
+
+  await resendOtp(patient.otpId);
+
+  res.status(200).send(Response(true, {}, "OTP resent successfully"));
+};
+
+const putPatient = async (req, res, next) => {
+  const { id } = req.params;
+  const { name, mobile, dob, imgId } = req.body;
+
+  if (!id) {
+    res.status(200).send(Response(false, {}, "Missing params"));
+  } else {
+    try {
+      if (mobile != null) {
+        const found = await patientService.getPatientById(id);
+        const patient = await patientService.putPatient(
+          id,
+          name,
+          mobile,
+          dob,
+          imgId
+        );
+        const result = await generateOtp(mobile);
+        found.otpId = result.data.otp_id;
+        await patient.save();
+        await found.save();
+        res
+          .status(200)
+          .send(Response(true, {}, "patient has been upadated successfully"));
+      } else {
+        const user = await patientService.putPatient(
+          id,
+          name,
+          mobile,
+          dob,
+          imgId
+        );
+        await user.save();
+        res
+          .status(200)
+          .send(Response(true, {}, "patient has been upadated successfully"));
+      }
+    } catch (err) {
+      res.status(500).send(Response(false, {}, err.message));
+    }
+  }
+};
+
 // get patients
 const getPatients = async (req, res, next) => {
   try {
@@ -20,20 +148,6 @@ const getPatients = async (req, res, next) => {
     } else {
       res.status(200).send(Response(true, patients, ""));
     }
-  } catch (err) {
-    res.status(500).send(Response(false, {}, err.message));
-  }
-};
-
-const deletePatients = async (req, res, next) => {
-  try {
-    await patientService.deleteAllPatients();
-    await reservationService.deleteAllReservations();
-    await _Favorites.find().deleteMany();
-    await _Question.find().deleteMany();
-    res
-      .status(200)
-      .send(Response(true, {}, "All patients has been deleted successfully"));
   } catch (err) {
     res.status(500).send(Response(false, {}, err.message));
   }
@@ -54,6 +168,40 @@ const getPatientById = async (req, res, next) => {
     } else {
       res.status(200).send(Response(true, patient, ""));
     }
+  } catch (err) {
+    res.status(500).send(Response(false, {}, err.message));
+  }
+};
+
+const deletePatients = async (req, res, next) => {
+  try {
+    await patientService.deleteAllPatients();
+    await reservationService.deleteAllReservations();
+    await _Favorites.find().deleteMany();
+    await _Question.find().deleteMany();
+    res
+      .status(200)
+      .send(Response(true, {}, "All patients has been deleted successfully"));
+  } catch (err) {
+    res.status(500).send(Response(false, {}, err.message));
+  }
+};
+
+// delete patient
+const deletePatient = async (req, res, next) => {
+  const { id } = req.params;
+
+  if (!id) {
+    res.status(200).send(Response(false, {}, "Missing params"));
+  }
+
+  // delete
+  try {
+    await patientService.deletePatient(id);
+    await reservationService.deleteReservationByPatientId(id);
+    await _Favorites.find({ patient: id }).deleteMany();
+    await _Question.find({ patientId: id }).deleteMany();
+    res.status(200).send(Response(true, {}, "Patient deleted succssefully.."));
   } catch (err) {
     res.status(500).send(Response(false, {}, err.message));
   }
@@ -107,98 +255,6 @@ const getCancelledRservations = async (req, res, next) => {
   } catch (err) {
     res.status(500).send(Response(false, {}, err.message));
   }
-};
-// post patient
-const postPatient = async (req, res, next) => {
-  const { name, mobile, dob, imgId } = req.body;
-
-  // validation
-  if (!name && !mobile && !dob) {
-    res.status(200).send(Response(false, {}, "Missing data"));
-  }
-  // checking if mobile already exists
-  const find = await patientService.getPatientByMobile(mobile);
-  const found = await doctorService.getDoctorByMobile(mobile);
-  if (find || found) {
-    res
-      .status(200)
-      .send(Response(false, {}, "This mobile number already exists"));
-  } else {
-    // post
-    try {
-      const result = await patientService.postPatient(name, mobile, dob, imgId);
-      res.status(200).send(Response(true, result, "OTP sent seccessfully"));
-    } catch (err) {
-      res.status(500).send(Response(false, {}, err.message));
-    }
-  }
-};
-
-// Log in
-const patientLogin = async (req, res, next) => {
-  const { mobile } = req.body;
-  // validation
-  if (!mobile) res.status(200).send(Response(false, {}, "Missing data"));
-  const found = await patientService.getPatientByMobile(mobile);
-  if (!found)
-    res
-      .status(200)
-      .send(Response(false, "", "There is no patient with this mobile number"));
-
-  //generating otp
-  const result = await generateOtp(mobile);
-  found.otpId = result.data.otp_id;
-  await found.save();
-
-  res.status(200).send(Response(true, found._id, "OTP sent successfully .. "));
-};
-
-// delete patient
-const deletePatient = async (req, res, next) => {
-  const { id } = req.params;
-
-  if (!id) {
-    res.status(200).send(Response(false, {}, "Missing params"));
-  }
-
-  // delete
-  try {
-    await patientService.deletePatient(id);
-    await reservationService.deleteReservationByPatientId(id);
-    await _Favorites.find({ patient: id }).deleteMany();
-    await _Question.find({ patientId: id }).deleteMany();
-    res.status(200).send(Response(true, {}, "Patient deleted succssefully.."));
-  } catch (err) {
-    res.status(500).send(Response(false, {}, err.message));
-  }
-};
-
-const verifyPatientOtp = async (req, res, next) => {
-  const { mobile, otpCode } = req.body;
-
-  const patient = await patientService.getPatientByMobile(mobile);
-
-  //verify otpCode
-  verifyOtp(patient.otpId, otpCode).then(async (result) => {
-    if (result.data.status === "APPROVED") {
-      patient.isVerified = true;
-      await patient.save();
-
-      res.status(200).send(Response(true, patient, "Verified successfully"));
-    } else {
-      res.status(200).send(Response(false, {}, "invalid otp"));
-    }
-  });
-};
-
-const resendPatientOtp = async (req, res, next) => {
-  const { mobile } = req.body;
-
-  const patient = await patientService.getPatientByMobile(mobile);
-
-  await resendOtp(patient.otpId);
-
-  res.status(200).send(Response(true, {}, "OTP resent successfully"));
 };
 
 const addRating = async (req, res, next) => {
@@ -300,6 +356,19 @@ const favorites = async (req, res, next) => {
   }
 };
 
+const allFavorites = async (req, res, next) => {
+  try {
+    const doctors = await patientService.getAllFavorites();
+    if (!doctors) {
+      res.status(200).send(Response(false, {}, "there is no favorites"));
+    } else {
+      res.status(200).send(Response(true, doctors, ""));
+    }
+  } catch (err) {
+    res.status(500).send(Response(false, {}, err.message));
+  }
+};
+
 const getFavorites = async (req, res, next) => {
   const { id } = req.params;
   if (!id) {
@@ -338,19 +407,6 @@ const removeFromFavorites = async (req, res, next) => {
   }
 };
 
-const allFavorites = async (req, res, next) => {
-  try {
-    const doctors = await patientService.getAllFavorites();
-    if (!doctors) {
-      res.status(200).send(Response(false, {}, "there is no favorites"));
-    } else {
-      res.status(200).send(Response(true, doctors, ""));
-    }
-  } catch (err) {
-    res.status(500).send(Response(false, {}, err.message));
-  }
-};
-
 const removeAllFavorites = async (req, res, next) => {
   try {
     await patientService.deleteAllFavorites();
@@ -370,6 +426,7 @@ module.exports = {
   getDoneRservations,
   getCancelledRservations,
   postPatient,
+  putPatient,
   patientLogin,
   deletePatient,
   verifyPatientOtp,

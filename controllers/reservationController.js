@@ -47,23 +47,6 @@ const postReservation = async (req, res, next) => {
   }
 };
 
-// delete reservations by doctor id
-const deleteReservations = async (req, res, next) => {
-  const { id } = req.params;
-  if (!id) {
-    res.status(200).send(Response(false, {}, "Missing params"));
-  } else {
-    try {
-      await reservationService.deleteReservationByDoctorId(id);
-      res
-        .status(200)
-        .send(Response(true, {}, "Reservations deleted successfully.."));
-    } catch (err) {
-      res.status(500).send(Response(false, {}, err.message));
-    }
-  }
-};
-
 const putReservations = async (req, res, next) => {
   const { id } = req.params;
   const { scheduleId, dateTime } = req.body;
@@ -75,6 +58,34 @@ const putReservations = async (req, res, next) => {
       res
         .status(200)
         .send(Response(true, {}, "Reservation edited successfully.."));
+    } catch (err) {
+      res.status(500).send(Response(false, {}, err.message));
+    }
+  }
+};
+
+const deleteReservationsAll = async (req, res, next) => {
+  try {
+    await reservationService.deleteAllReservations();
+    res
+      .status(200)
+      .send(Response(true, {}, "All reservations deleted successfully.."));
+  } catch (err) {
+    res.status(500).send(Response(false, {}, err.message));
+  }
+};
+
+// delete reservations by doctor id
+const deleteReservations = async (req, res, next) => {
+  const { id } = req.params;
+  if (!id) {
+    res.status(200).send(Response(false, {}, "Missing params"));
+  } else {
+    try {
+      await reservationService.deleteReservationByDoctorId(id);
+      res
+        .status(200)
+        .send(Response(true, {}, "Reservations deleted successfully.."));
     } catch (err) {
       res.status(500).send(Response(false, {}, err.message));
     }
@@ -182,17 +193,6 @@ const cancelledReservationByDate = async (req, res, next) => {
     } catch (err) {
       res.status(500).send(Response(false, {}, err.message));
     }
-  }
-};
-
-const deleteReservationsAll = async (req, res, next) => {
-  try {
-    await reservationService.deleteAllReservations();
-    res
-      .status(200)
-      .send(Response(true, {}, "All reservations deleted successfully.."));
-  } catch (err) {
-    res.status(500).send(Response(false, {}, err.message));
   }
 };
 
