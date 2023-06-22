@@ -58,6 +58,24 @@ const getReservationByDoctorId = async (doctorId) => {
   return reservations;
 };
 
+const getReservationsByTodayDate = async (id) => {
+  let dat = Date.now(); 
+  dat = new Date(dat);
+  let dwt = new Date(dat.setUTCHours(0, 0, 0, 0));
+  console.log(dwt);
+  const reservations = await _Reservation
+    .find({
+      doctor: id,
+      date: dwt ,
+      done: false,
+      cancelled: false,
+    })
+    .select({ doctor: 0 })
+    .populate("schedule")
+    .populate({ path: "patient", select: { name: 1, dob: 1, _id: 0 } });
+  return reservations;
+}
+
 // get by patientId
 const getReservationByPatientId = async (patientId) => {
   const reservations = await _Reservation
@@ -170,6 +188,7 @@ module.exports = {
   getReservations,
   getReservationById,
   getReservationByDoctorId,
+  getReservationsByTodayDate,
   getDoneReservationByDoctorId,
   getCancelledReservationByDoctorId,
   getReservationByPatientId,

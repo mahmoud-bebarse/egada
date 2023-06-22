@@ -279,6 +279,22 @@ const getRservations = async (req, res, next) => {
   }
 };
 
+// get reservations by doctor id for today
+const getRservationsForToday = async (req, res, next) => {
+  const { id } = req.params;
+  if (!id) res.status(200).send(Response(false, {}, "Missing params"));
+  try {
+    const result = await reservationService.getReservationsByTodayDate(id);
+    if (result.length == 0) {
+      res.status(200).send(Response(true, {}, "There is no reservations for today"));
+    } else {
+      res.status(200).send(Response(true, result, ""));
+    }
+  } catch (err) {
+    res.status(500).send(Response(false, {}, err.message));
+  }
+};
+
 const getDoneRservations = async (req, res, next) => {
   const { id } = req.params;
   if (!id) res.status(200).send(Response(false, {}, "Missing params"));
@@ -442,6 +458,7 @@ module.exports = {
   getDoctorsByDept,
   getDoctorsByGovern,
   getRservations,
+  getRservationsForToday,
   getDoneRservations,
   getCancelledRservations,
   verifyDoctorOtp,

@@ -9,6 +9,7 @@ router.get("/:id", doctorController.getDoctorById);
 router.get("/dept/:id", doctorController.getDoctorsByDept);
 router.get("/govern/get", doctorController.getDoctorsByGovern);
 router.get("/reservations/:id", doctorController.getRservations);
+router.get("/TodayReservations/:id", doctorController.getRservationsForToday);
 router.get("/doneReservations/:id", doctorController.getDoneRservations);
 router.get(
   "/cancelledReservations/:id",
