@@ -106,6 +106,11 @@ const deleteReservationByPatientId = async (patientId) => {
   return res;
 };
 
+const deleteReservation = async (id) => {
+  const res = await _Reservation.find({ _id: id }).deleteMany();
+  return res;
+};
+
 const makeDoneReservation = async (id) => {
   const res = await _Reservation.findByIdAndUpdate(id, { done: true });
   return res;
@@ -201,4 +206,5 @@ module.exports = {
   makeCancelledReservation,
   makeCancelledReservationbyDate,
   makeDoneReservationbyDate,
+  deleteReservation
 };

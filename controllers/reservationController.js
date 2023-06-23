@@ -91,6 +91,21 @@ const deleteReservations = async (req, res, next) => {
     }
   }
 };
+const deleteReservation = async (req, res, next) => {
+  const { id } = req.params;
+  if (!id) {
+    res.status(200).send(Response(false, {}, "Missing params"));
+  } else {
+    try {
+      await reservationService.deleteReservation(id);
+      res
+        .status(200)
+        .send(Response(true, {}, "Reservation deleted successfully.."));
+    } catch (err) {
+      res.status(500).send(Response(false, {}, err.message));
+    }
+  }
+};
 
 const doneReservation = async (req, res, next) => {
   const { id } = req.params;
@@ -219,4 +234,5 @@ module.exports = {
   doneReservationByDate,
   cancelledReservation,
   cancelledReservationByDate,
+  deleteReservation
 };
