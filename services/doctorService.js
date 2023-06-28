@@ -52,8 +52,8 @@ const putDoctor = async (
     address,
     fee,
     desc,
-    govern,
-    imgId,
+    governorate: govern,
+    profileImg: imgId,
   });
 
   await doctor.save();
