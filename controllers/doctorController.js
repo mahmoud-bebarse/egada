@@ -41,7 +41,7 @@ const postDoctor = async (req, res, next) => {
         govern,
         imgId
       );
-      res.status(200).send(Response(true, { result }, "OTP sent successfully"));
+      res.status(200).send(Response(true,  result , "OTP sent successfully"));
     } catch (err) {
       res.status(500).send(Response(false, {}, err.message));
     }
