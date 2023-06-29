@@ -64,7 +64,7 @@ const doctorLogin = async (req, res, next) => {
   found.otpId = result.data.otp_id;
   found.save();
 
-  res.status(200).send(Response(true, found._id, "OTP sent successfully .. "));
+  res.status(200).send(Response(true, found, "OTP sent successfully .. "));
 };
 
 const verifyDoctorOtp = async (req, res, next) => {
