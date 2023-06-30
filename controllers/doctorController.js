@@ -335,7 +335,7 @@ const getCancelledRservations = async (req, res, next) => {
 const postDoctorSchedules = async (req, res, next) => {
   const { doctor } = req.params;
   const { fromHr, fromMin, toHr, toMin, day } = req.body;
-  if (!fromHr || !toHr || !doctor || !day) {
+  if (!doctor || !day) {
     res.status(200).send(Response(false, {}, "Missing data"));
   } else {
     try {
@@ -376,7 +376,7 @@ const putSchedules = async (req, res, next) => {
       { fromHr, fromMin, toHr, toMin, day }
     );
     schedule.save();
-    res.status(200).send(Response(true, schedule, ""));
+    res.status(200).send(Response(true, {}, "Schedule has been updated successfully"));
   } catch (err) {
     res.status(500).send(Response(false, {}, err.message));
   }
@@ -414,6 +414,22 @@ const deleteSchedules = async (req, res, next) => {
     }
   }
 };
+
+const deleteSchedule = async (req, res, next) => {
+  const { id } = req.params; 
+  if (!id) {
+    res.status(200).send(Response(false, {}, "Missing params"));
+  } else {
+    try {
+      await doctorService.deleteSchedule(id);
+      res
+        .status(200)
+        .send(Response(true, {}, "Schedule has been deleted successfully.."));
+    } catch (err) {
+      res.status(500).send(Response(false, {}, err.message));
+    }
+  }
+}
 
 const deleteSchedulesAll = async (req, res, next) => {
   try {
@@ -465,6 +481,7 @@ module.exports = {
   resendDoctorOtp,
   deleteDoctors,
   deleteSchedules,
+  deleteSchedule,
   deleteSchedulesAll,
   putSchedules,
   getRatingsByDoctorId,

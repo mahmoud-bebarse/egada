@@ -159,22 +159,28 @@ const addDoctorsSchedules = async (
   return schedule;
 };
 
-const deleteAllSchedules = async () => {
-  const schedule = await _Schedules.find().deleteMany();
-  return schedule;
-};
-
 const getSchedulesByDoctorId = async (id) => {
   const schedules = await _Schedules.find({ doctor: id });
 
   return schedules;
 };
 
+const deleteAllSchedules = async () => {
+  const schedule = await _Schedules.find().deleteMany();
+  return schedule;
+};
+
+
 const deleteSchedules = async (id) => {
   const schedule = await _Schedules.find({ doctor: id }).deleteMany();
   return schedule;
 };
 
+const deleteSchedule = async (id) => {
+  const schedule = await _Schedules.findByIdAndDelete(id);
+
+  return schedule ;
+}
 const getRatings = async (id) => {
   const rating = await _Rating
     .find({ doctor: id })
@@ -200,6 +206,7 @@ module.exports = {
   getSchedulesByDoctorId,
   getDoctorByMobile,
   deleteSchedules,
+  deleteSchedule,
   deleteAllSchedules,
   getRatings,
   updateAvgRatingByDoctorId,

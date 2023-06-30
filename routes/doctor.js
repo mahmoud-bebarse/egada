@@ -21,6 +21,7 @@ router.put("/update/:id", doctorController.putDoctor);
 router.delete("/delete/:id", doctorController.deleteDoctor);
 router.delete("/deleteAll", doctorController.deleteDoctors);
 router.delete("/schedules/delete/:id", doctorController.deleteSchedules);
+router.delete("/schedule/delete/:id", doctorController.deleteSchedule);
 router.delete("/schedules/deleteAll", doctorController.deleteSchedulesAll);
 router.get("/schedules/:id", doctorController.getDoctorSchedules);
 router.post("/addSchedules/:doctor", doctorController.postDoctorSchedules);
