@@ -60,7 +60,7 @@ app.use("/questions", questionsRouter);
 // app.get("/file/:filename", (req, res) => {
 //   res.sendFile(path.join(__dirname, `./public/uploads/${req.params.filename}`));
 // });
-/*
+
 const upld = upload("file");
 app.post("/file", upld, async (req, res) => {
   if (req.files) {
@@ -77,7 +77,7 @@ app.post("/file", upld, async (req, res) => {
     });
   }
 });
-*/
+
 app.use("/file/:filename", (req, res) => {
   res.sendFile(path.join(__dirname, `./public/uploads/${req.params.filename}`));
 });
