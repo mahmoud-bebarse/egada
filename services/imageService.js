@@ -36,14 +36,10 @@ const postImage = async (fileName) => {
  * @param id: ObjectID
  */
 const deleteImage = async (id) => {
-  const image = await _image.findByIdAndUpdate(
-    { $and: [{ _id: id }, { status: true }] },
-    { status: false },
-    {
-      useFindAndModify: false,
-      new: true,
-    }
+  const image = await _image.findByIdAndDelete(
+    { _id: id , status: true }
   );
+  return image
 };
 
 const updateImage = async (id, fileName) => {
