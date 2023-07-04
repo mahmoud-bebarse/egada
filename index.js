@@ -1,13 +1,12 @@
 // importing the dependencies
 require("dotenv").config();
-var path = require("path");
-var createError = require("http-errors");
+const path = require("path");
+const createError = require("http-errors");
 const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const helmet = require("helmet");
 const morgan = require("morgan");
-const Response = require("./models/response");
 const _Image = require("./models/image");
 // register routes
 const indexRouter = require("./routes/index");
@@ -61,7 +60,7 @@ app.use("/questions", questionsRouter);
 // app.get("/file/:filename", (req, res) => {
 //   res.sendFile(path.join(__dirname, `./public/uploads/${req.params.filename}`));
 // });
-
+/*
 const upld = upload("file");
 app.post("/file", upld, async (req, res) => {
   if (req.files) {
@@ -78,6 +77,7 @@ app.post("/file", upld, async (req, res) => {
     });
   }
 });
+*/
 app.use("/file/:filename", (req, res) => {
   res.sendFile(path.join(__dirname, `./public/uploads/${req.params.filename}`));
 });
