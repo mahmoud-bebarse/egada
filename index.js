@@ -9,7 +9,6 @@ const helmet = require("helmet");
 const morgan = require("morgan");
 const Response = require("./models/response");
 const _Image = require("./models/image");
-
 // register routes
 const indexRouter = require("./routes/index");
 const userRouter = require("./routes/user");
@@ -64,14 +63,14 @@ app.use("/questions", questionsRouter);
 // });
 
 const upld = upload("file");
-
+const _dirname = path.dirname(__filename);
 app.post("/file", upld, async(req, res) => {
   if (req.files) {
     var file = req.files.file;
     var fileName = file.name;
     const image = new _Image({ fileName: fileName });
     await image.save();
-    file.mv("./public/uploads/" + fileName, (err) => {
+    file.mv(path.join(_dirname, "./public/uploads"+fileName), (err) => {
       if (err) {
         res.status(500).send(err.message);
       } else {
