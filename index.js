@@ -70,7 +70,7 @@ app.post("/file", upld, async(req, res) => {
     var fileName = file.name;
     const image = new _Image({ fileName: fileName });
     await image.save();
-    file.mv(path.join(_dirname, "./public/uploads/"+fileName), (err) => {
+    file.mv(path.join("public/uploads/"+fileName), (err) => {
       if (err) {
         res.status(500).send(err.message);
       } else {
