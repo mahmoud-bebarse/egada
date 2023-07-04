@@ -8,7 +8,7 @@ router.get("/all", imageController.getImages);
 router.post("/", single, imageController.postImage);
 router.delete("/:id", imageController.deleteImage);
 router.get("/:id", imageController.getImageById);
-router.put("/:id", imageController.updateImage);
+router.put("/:id",single , imageController.updateImage);
 router.delete("/delete/all", imageController.deleteAll);
 
 module.exports = router;
