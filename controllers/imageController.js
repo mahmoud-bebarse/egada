@@ -8,6 +8,7 @@ const getImages = async (req, res, next) => {
   if (!images) {
     res.status(200).send(Response(false, {}, "There is no image"));
   } else {
+    // res.render('images', { images: images });
     res.status(200).send(Response(true, images, ""));
   }
 };
@@ -53,9 +54,12 @@ const getImageById = async (req, res, next) => {
 };
 
 const postImage = async (req, res, next) => {
-  const file = req.file;
+  const { file } = req; 
+  console.warn('file', file);
   try {
-    const result = await imageService.postImage(file.filename);
+    const result = await imageService.postImage(file);
+    
+    
     res.status(200).send(Response(true, result, ""));
   } catch (err) {
     res.status(400).send(Response(false, {}, err.message));
@@ -76,6 +80,7 @@ const updateImage = async (req, res, next) => {
     }
   }
 };
+
 module.exports = {
   getImages,
   getImageById,
