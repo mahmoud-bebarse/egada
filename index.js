@@ -79,7 +79,7 @@ app.post("/file", upld, async (req, res) => {
 });
 
 app.use("/file/:filename", (req, res) => {
-  res.sendFile(path.join(`./public/uploads/${req.params.filename}`));
+  res.sendFile(path.join(__dirname, `./public/uploads/${req.params.filename}`));
 });
 
 // catch 404 and forward to error handler
