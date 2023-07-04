@@ -112,14 +112,14 @@ const deleteReservation = async (id) => {
 };
 
 const makeDoneReservation = async (id) => {
-  const res = await _Reservation.findByIdAndUpdate(id, { done: true });
+  const res = await _Reservation.findByIdAndUpdate(id, { done: true, cancelled: false });
   return res;
 };
 
 const makeDoneReservationbyDate = async (id, dateTime) => {
   const res = await _Reservation
     .find({ doctor: id, date: dateTime })
-    .updateMany({ done: true });
+    .updateMany({ done: true, cancelled: false });
   return res;
 };
 
@@ -152,12 +152,12 @@ const getDoneReservationByPatientId = async (patientId) => {
 const makeCancelledReservationbyDate = async (id, dateTime) => {
   const res = await _Reservation
     .find({ doctor: id, date: dateTime })
-    .updateMany({ cancelled: true });
+    .updateMany({ cancelled: true, done: false });
   return res;
 };
 
 const makeCancelledReservation = async (id) => {
-  const res = await _Reservation.findByIdAndUpdate(id, { cancelled: true });
+  const res = await _Reservation.findByIdAndUpdate(id, { cancelled: true, done: false });
   return res;
 };
 

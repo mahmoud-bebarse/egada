@@ -7,6 +7,8 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 const helmet = require("helmet");
 const morgan = require("morgan");
+const Response = require("./models/response");
+const _Image = require("./models/image");
 
 // register routes
 const indexRouter = require("./routes/index");
@@ -18,6 +20,7 @@ const reservationRouter = require("./routes/reservation");
 const imageRouter = require("./routes/image");
 const questionsRouter = require("./routes/questions");
 
+const upload = require("express-fileupload");
 // defining the Express app
 const app = express();
 
@@ -53,13 +56,30 @@ app.use("/patient", patientRouter);
 app.use("/reservation", reservationRouter);
 app.use("/lookup", lookupRouter);
 app.use("/image", imageRouter);
-app.use("/questions", questionsRouter)
+app.use("/questions", questionsRouter);
 
 // path for images
 // app.get("/file/:filename", (req, res) => {
 //   res.sendFile(path.join(__dirname, `./public/uploads/${req.params.filename}`));
 // });
 
+const upld = upload("file");
+
+app.post("/file", upld, async(req, res) => {
+  if (req.files) {
+    var file = req.files.file;
+    var fileName = file.name;
+    const image = new _Image({ fileName: fileName });
+    await image.save();
+    file.mv("./public/uploads/" + fileName, (err) => {
+      if (err) {
+        res.status(500).send(err.message);
+      } else {
+        res.status(200).send(image);
+      }
+    });
+  }
+});
 app.use("/file/:filename", (req, res) => {
   res.sendFile(path.join(__dirname, `./public/uploads/${req.params.filename}`));
 });
@@ -79,9 +99,6 @@ app.use(function (err, req, res, next) {
   res.status(err.status || 500);
   res.render("error");
 });
-
-
-
 
 // not-found route
 app.use((req, res, next) => {
