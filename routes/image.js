@@ -9,5 +9,6 @@ router.post("/", single, imageController.postImage);
 router.delete("/:id", imageController.deleteImage);
 router.get("/:id", imageController.getImageById);
 router.put("/:id", imageController.updateImage);
+router.delete("/all", imageController.deleteAll);
 
 module.exports = router;

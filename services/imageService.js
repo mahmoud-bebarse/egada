@@ -42,6 +42,10 @@ const deleteImage = async (id) => {
   return image
 };
 
+const deleteAll = async () => {
+  await _image.find().deleteMany();
+}
+
 const updateImage = async (id, fileName) => {
   const image = await _image.findOneAndUpdate(
     { $and: [{ _id: id }, { status: true }] },
@@ -58,5 +62,6 @@ module.exports = {
   getImageById,
   postImage,
   deleteImage,
+  deleteAll,
   updateImage,
 };

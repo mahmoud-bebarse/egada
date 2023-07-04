@@ -23,6 +23,17 @@ const deleteImage = async (req, res, next) => {
   }
 };
 
+const deleteAll = async (req, res, next) => {
+  try {
+    await imageService.deleteAll();
+    res
+      .status(200)
+      .send(Response(true, {}, "images has been deleted successfully"));
+  } catch (err) {
+    res.status(500).send(Response(false, {}, err.message));
+  }
+}
+
 const getImageById = async (req, res, next) => {
   const { id } = req.params;
   if (!id) {
@@ -70,5 +81,6 @@ module.exports = {
   getImageById,
   postImage,
   deleteImage,
+  deleteAll,
   updateImage,
 };
