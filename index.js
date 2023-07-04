@@ -68,7 +68,7 @@ app.post("/file", upld, async (req, res) => {
     var fileName = file.name;
     const image = new _Image({ fileName: fileName });
     await image.save();
-    file.mv(path.join( "Code/node/egada/public/uploads/" + fileName), (err) => {
+    file.mv(path.join(__dirname, `./public/uploads/${fileName}`), (err) => {
       if (err) {
         res.status(500).send(err.message);
       } else {
@@ -102,8 +102,6 @@ app.use(function (err, req, res, next) {
 app.use((req, res, next) => {
   res.status(404).sendFile(path.join(__dirname, "./views", "404.html"));
 });
-
-
 
 // starting the server
 const port = process.env.PORT || 3000;
