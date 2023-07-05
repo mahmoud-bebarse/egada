@@ -64,7 +64,7 @@ const postImage = async (req, res, next) => {
 
 const updateImage = async (req, res, next) => {
   const { id } = req.params;
-  const { fileName } = req.file.filename;
+  const { fileName } = req.body;
   if (!id || !fileName) {
     res.status(200).send(Response(false, {}, "missing data"));
   } else {
