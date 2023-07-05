@@ -21,15 +21,42 @@ const getImageById = async (id) => {
  * @description postImage
  * @param file: file
  */
-const postImage = async (fileName) => {
-  const image = new _image({ fileName });
+const postImage = async (file) => {
+  const renamed = renameFile(file);
   try {
+    // const res = await uploadBasic(renamed);
+    const image = new _image({ 
+      fileName: renamed.fileName, 
+      image: {
+        data: file.buffer,
+        contentType: file.mimetype,
+      }, 
+    });
+
     const result = await image.save();
     return result;
   } catch (err) {
     return err;
   }
 };
+
+
+/**
+ * 
+ * @param {file} fileObject 
+ * @description renamiing file
+ * @returns {file}
+ */
+const renameFile = (file) => {
+  const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+  const fileName = `${file.fieldname}-${uniqueSuffix}.${file.originalname.split(".")[1]}`
+  const renamed = {
+    ...file,
+    fileName,
+  };
+  return renamed;
+};
+
 
 /**
  * @description deleteImage
@@ -57,6 +84,7 @@ const updateImage = async (id, fileName) => {
   );
   return image;
 };
+
 module.exports = {
   getImages,
   getImageById,

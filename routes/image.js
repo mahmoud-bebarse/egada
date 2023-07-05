@@ -1,11 +1,11 @@
 const express = require("express");
 const imageController = require("../controllers/imageController.js");
-const { single } = require("../middlewares/upload.js");
+const { img } = require("../middlewares/upload.js");
 
 const router = express.Router();
 
 router.get("/all", imageController.getImages);
-router.post("/", single, imageController.postImage);
+router.post("/", img, imageController.postImage);
 router.delete("/:id", imageController.deleteImage);
 router.get("/:id", imageController.getImageById);
 router.put("/:id", imageController.updateImage);
