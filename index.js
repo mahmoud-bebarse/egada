@@ -18,7 +18,6 @@ const reservationRouter = require("./routes/reservation");
 const imageRouter = require("./routes/image");
 const questionsRouter = require("./routes/questions");
 
-const upload = require("express-fileupload");
 // defining the Express app
 const app = express();
 
@@ -61,26 +60,6 @@ app.use("/questions", questionsRouter);
 //   res.sendFile(path.join(__dirname, `./public/uploads/${req.params.filename}`));
 // });
 
-const upld = upload("file");
-app.post("/file", upld, async (req, res) => {
-  if (req.files) {
-    var file = req.files.file;
-    var fileName = file.name;
-    const image = new _Image({ fileName: fileName });
-    await image.save();
-    file.mv(path.join(__dirname, `./public/uploads/${fileName}`), (err) => {
-      if (err) {
-        res.status(500).send(err.message);
-      } else {
-        res.status(200).send(image);
-      }
-    });
-  }
-});
-
-app.use("/file/:filename", (req, res) => {
-  res.sendFile(path.join(__dirname, `./public/uploads/${req.params.filename}`));
-});
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
@@ -93,6 +72,7 @@ app.use(function (err, req, res, next) {
   res.locals.message = err.message;
   res.locals.error = req.app.get("env") === "development" ? err : {};
 
+  console.error("err", err);
   // render the error page
   res.status(err.status || 500);
   res.render("error");
