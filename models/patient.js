@@ -10,6 +10,7 @@ const patientSchema = new mongoose.Schema({
     ref: "image",
     required: false,
   },
+  token: { type: String, required: false, trim: true },
   otpId: { type: String, trim: true },
   status: { type: Boolean, default: true },
   entryDate: { type: Date, default: Date.now },

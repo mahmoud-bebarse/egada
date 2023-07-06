@@ -14,8 +14,7 @@ const _Rating = require("../models/rating.js");
 
 // post doctor
 const postDoctor = async (req, res, next) => {
-  const { name, mobile, dept, address, fee, desc, govern, imgId } = req.body;
-
+  const { name, mobile, dept, address, fee, desc, govern, imgId, token } = req.body;
   // validation
   if (!name || !mobile || !dept || !address || !fee || !desc || !govern) {
     res.status(200).send(Response(false, {}, "Missing data"));
@@ -39,9 +38,10 @@ const postDoctor = async (req, res, next) => {
         fee,
         desc,
         govern,
-        imgId
+        imgId,
+        token
       );
-      res.status(200).send(Response(true,  result , "OTP sent successfully"));
+      res.status(200).send(Response(true, result, "OTP sent successfully"));
     } catch (err) {
       res.status(500).send(Response(false, {}, err.message));
     }
@@ -96,7 +96,7 @@ const resendDoctorOtp = async (req, res, next) => {
 
 const putDoctor = async (req, res, next) => {
   const { id } = req.params;
-  const { name, mobile, dept, address, fee, desc, govern, imgId } = req.body;
+  const { name, mobile, dept, address, fee, desc, govern, imgId, token } = req.body;
 
   if (!id) {
     res.status(200).send(Response(false, {}, "Missing params"));
@@ -113,7 +113,8 @@ const putDoctor = async (req, res, next) => {
           fee,
           desc,
           govern,
-          imgId
+          imgId,
+          token
         );
         const result = await generateOtp(mobile);
         found.otpId = result.data.otp_id;
@@ -132,7 +133,8 @@ const putDoctor = async (req, res, next) => {
           fee,
           desc,
           govern,
-          imgId
+          imgId,
+          token
         );
         await user.save();
         res
@@ -286,7 +288,9 @@ const getRservationsForToday = async (req, res, next) => {
   try {
     const result = await reservationService.getReservationsByTodayDate(id);
     if (result.length == 0) {
-      res.status(200).send(Response(true, {}, "There is no reservations for today"));
+      res
+        .status(200)
+        .send(Response(true, {}, "There is no reservations for today"));
     } else {
       res.status(200).send(Response(true, result, ""));
     }
@@ -376,7 +380,9 @@ const putSchedules = async (req, res, next) => {
       { fromHr, fromMin, toHr, toMin, day }
     );
     schedule.save();
-    res.status(200).send(Response(true, {}, "Schedule has been updated successfully"));
+    res
+      .status(200)
+      .send(Response(true, {}, "Schedule has been updated successfully"));
   } catch (err) {
     res.status(500).send(Response(false, {}, err.message));
   }
@@ -416,7 +422,7 @@ const deleteSchedules = async (req, res, next) => {
 };
 
 const deleteSchedule = async (req, res, next) => {
-  const { id } = req.params; 
+  const { id } = req.params;
   if (!id) {
     res.status(200).send(Response(false, {}, "Missing params"));
   } else {
@@ -429,7 +435,7 @@ const deleteSchedule = async (req, res, next) => {
       res.status(500).send(Response(false, {}, err.message));
     }
   }
-}
+};
 
 const deleteSchedulesAll = async (req, res, next) => {
   try {

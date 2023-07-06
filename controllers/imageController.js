@@ -33,7 +33,7 @@ const deleteAll = async (req, res, next) => {
   } catch (err) {
     res.status(500).send(Response(false, {}, err.message));
   }
-}
+};
 
 const getImageById = async (req, res, next) => {
   const { id } = req.params;
@@ -54,12 +54,11 @@ const getImageById = async (req, res, next) => {
 };
 
 const postImage = async (req, res, next) => {
-  const { file } = req; 
-  console.warn('file', file);
+  const { file } = req;
+  console.warn("file", file);
   try {
     const result = await imageService.postImage(file);
-    
-    
+
     res.status(200).send(Response(true, result, ""));
   } catch (err) {
     res.status(400).send(Response(false, {}, err.message));

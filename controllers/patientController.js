@@ -13,7 +13,7 @@ const {
 
 // post patient
 const postPatient = async (req, res, next) => {
-  const { name, mobile, dob, imgId } = req.body;
+  const { name, mobile, dob, imgId, token } = req.body;
 
   // validation
   if (!name && !mobile && !dob) {
@@ -29,7 +29,7 @@ const postPatient = async (req, res, next) => {
   } else {
     // post
     try {
-      const result = await patientService.postPatient(name, mobile, dob, imgId);
+      const result = await patientService.postPatient(name, mobile, dob, imgId, token);
       res.status(200).send(Response(true, result, "OTP sent seccessfully"));
     } catch (err) {
       res.status(500).send(Response(false, {}, err.message));
@@ -98,7 +98,7 @@ const resendPatientOtp = async (req, res, next) => {
 
 const putPatient = async (req, res, next) => {
   const { id } = req.params;
-  const { name, mobile, dob, imgId } = req.body;
+  const { name, mobile, dob, imgId, token } = req.body;
 
   if (!id) {
     res.status(200).send(Response(false, {}, "Missing params"));
@@ -111,7 +111,8 @@ const putPatient = async (req, res, next) => {
           name,
           mobile,
           dob,
-          imgId
+          imgId,
+          token
         );
         const result = await generateOtp(mobile);
         found.otpId = result.data.otp_id;
@@ -126,7 +127,8 @@ const putPatient = async (req, res, next) => {
           name,
           mobile,
           dob,
-          imgId
+          imgId,
+          token
         );
         await user.save();
         res

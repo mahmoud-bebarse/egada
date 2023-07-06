@@ -7,7 +7,7 @@ const doctorSchema = new mongoose.Schema({
   desc: { type: String, required: true, trim: true },
   fee: { type: Number, required: true, default: 0 },
   isVerified: { type: Boolean, default: false },
-  dept: { type: mongoose.Schema.Types.ObjectId, ref: "dept", required: false },
+  dept: { type: mongoose.Schema.Types.ObjectId, ref: "dept", required: true },
   schedules: {
     type: [mongoose.Schema.Types.ObjectId],
     ref: "schedule",
@@ -26,6 +26,7 @@ const doctorSchema = new mongoose.Schema({
     ref: "image",
     required: false,
   },
+  token: { type: String, required: false, trim: true },
   otpId: { type: String, trim: true },
   status: { type: Boolean, default: true },
   entryDate: { type: Date, default: Date.now },

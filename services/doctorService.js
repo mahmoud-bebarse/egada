@@ -11,27 +11,29 @@ const postDoctor = async (
   fee,
   desc,
   govern,
-  imgId
+  imgId,
+  token
 ) => {
-  const doctor = new _Doctor({
-    name,
-    mobile,
-    dept,
-    address,
-    fee,
-    desc,
-    governorate: govern,
-    profileImg: imgId,
-  });
+  
+    const doctor = new _Doctor({
+      name,
+      mobile,
+      dept,
+      address,
+      fee,
+      desc,
+      governorate: govern,
+      profileImg: imgId,
+      token
+    })
+    await doctor.save();
+    const result = await generateOtp(mobile);
 
-  await doctor.save();
+    doctor.otpId = result.data.otp_id;
+    await doctor.save();
 
-  const result = await generateOtp(mobile);
-
-  doctor.otpId = result.data.otp_id;
-  await doctor.save();
-
-  return doctor;
+    return doctor;
+  
 };
 
 const putDoctor = async (
@@ -43,7 +45,8 @@ const putDoctor = async (
   fee,
   desc,
   govern,
-  imgId
+  imgId,
+  token
 ) => {
   const doctor = await _Doctor.findByIdAndUpdate(id, {
     name,
@@ -54,6 +57,7 @@ const putDoctor = async (
     desc,
     governorate: govern,
     profileImg: imgId,
+    token
   });
 
   await doctor.save();

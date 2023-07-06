@@ -5,12 +5,13 @@ const _Favorites = require("../models/favorites.js");
 const _Doctor = require("../models/doctor.js");
 const { generateOtp } = require("../services/mobileAuthService.js");
 
-const postPatient = async (name, mobile, dob, imgId) => {
+const postPatient = async (name, mobile, dob, imgId, token) => {
   const patient = new _Patient({
     name,
     mobile,
     dob,
     profileImg: imgId,
+    token
   });
 
   await patient.save();
@@ -26,12 +27,13 @@ const postPatient = async (name, mobile, dob, imgId) => {
   return patient;
 };
 
-const putPatient = async (id, name, mobile, dob, imgId) => {
+const putPatient = async (id, name, mobile, dob, imgId, token) => {
   const patient = await _Patient.findByIdAndUpdate(id, {
     name,
     mobile,
     dob,
     profileImg: imgId,
+    token
   });
   await patient.save();
   return patient;
