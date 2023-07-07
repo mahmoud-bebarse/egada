@@ -22,7 +22,6 @@ const putDepts = async (name, desc, imgId, id) => {
     desc,
     profileImg: imgId
   })
-  await dept.save();
   return dept
 };
 

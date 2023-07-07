@@ -55,12 +55,14 @@ const deleteDept = async (req, res, next) => {
 
 const deleteAll = async (req, res, next) => {
   const result = await lookupService.deleteAll();
-  res.status(200).send(Response(true, {}, "All departments deleted successfully"));
-}
+  res
+    .status(200)
+    .send(Response(true, {}, "All departments deleted successfully"));
+};
 module.exports = {
   getDepts,
   postDepts,
   putDepts,
   deleteDept,
-  deleteAll
+  deleteAll,
 };
