@@ -32,7 +32,7 @@ const postDepts = async (req, res, next) => {
 const putDepts = async (req, res, next) => {
   const { id } = req.params;
   const { name, desc, imgId } = req.body;
-  if (!name || !desc || !id) {
+  if (!id) {
     res.status(200).send(Response(false, {}, "Missing data"));
   } else {
     try {
