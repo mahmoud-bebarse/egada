@@ -198,7 +198,7 @@ const getCancelledReservationByPatientId = async (patientId) => {
     .populate("schedule")
     .populate({
       path: "doctor",
-      populate: "dept",
+      populate: { path: "dept" },
       select: { name: 1, dept: 1, inFavorites: 1 },
     })
     .populate({
