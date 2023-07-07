@@ -118,6 +118,10 @@ const getFavoriteDoctors = async (patientId) => {
       path: "doctor",
       populate: { path: "dept", select: { name: 1, _id: 0 } },
     })
+    .populate({
+      path: "doctor",
+      populate: { path: "profileImg" },
+    })
     .select({ patient: 0 });
   return doctor;
 };

@@ -39,6 +39,7 @@ const getReservationById = async (id) => {
     .populate({
       path: "doctor",
       select: { rating: 0 },
+      populate: "profileImg",
     });
 
   return reservation;
@@ -59,14 +60,14 @@ const getReservationByDoctorId = async (doctorId) => {
 };
 
 const getReservationsByTodayDate = async (id) => {
-  let dat = Date.now(); 
+  let dat = Date.now();
   dat = new Date(dat);
   let dwt = new Date(dat.setUTCHours(0, 0, 0, 0));
   console.log(dwt);
   const reservations = await _Reservation
     .find({
       doctor: id,
-      date: dwt ,
+      date: dwt,
       done: false,
       cancelled: false,
     })
@@ -74,7 +75,7 @@ const getReservationsByTodayDate = async (id) => {
     .populate("schedule")
     .populate({ path: "patient", select: { name: 1, dob: 1, _id: 0 } });
   return reservations;
-}
+};
 
 // get by patientId
 const getReservationByPatientId = async (patientId) => {
@@ -84,8 +85,12 @@ const getReservationByPatientId = async (patientId) => {
     .populate("schedule")
     .populate({
       path: "doctor",
-      populate: "dept",
+      populate: { path: "dept" },
       select: { schedules: 0, rating: 0 },
+    })
+    .populate({
+      path: "doctor",
+      populate:({path:"profileImg"})
     });
   return reservations;
 };
@@ -112,7 +117,10 @@ const deleteReservation = async (id) => {
 };
 
 const makeDoneReservation = async (id) => {
-  const res = await _Reservation.findByIdAndUpdate(id, { done: true, cancelled: false });
+  const res = await _Reservation.findByIdAndUpdate(id, {
+    done: true,
+    cancelled: false,
+  });
   return res;
 };
 
@@ -143,8 +151,12 @@ const getDoneReservationByPatientId = async (patientId) => {
     .populate("schedule")
     .populate({
       path: "doctor",
-      populate: "dept",
+      populate: { path: "dept" },
       select: { name: 1, dept: 1, inFavorites: 1 },
+    })
+    .populate({
+      path: "doctor",
+      populate: { path: "profileImg" },
     });
   return reservations;
 };
@@ -157,7 +169,10 @@ const makeCancelledReservationbyDate = async (id, dateTime) => {
 };
 
 const makeCancelledReservation = async (id) => {
-  const res = await _Reservation.findByIdAndUpdate(id, { cancelled: true, done: false });
+  const res = await _Reservation.findByIdAndUpdate(id, {
+    cancelled: true,
+    done: false,
+  });
   return res;
 };
 
@@ -183,6 +198,10 @@ const getCancelledReservationByPatientId = async (patientId) => {
       path: "doctor",
       populate: "dept",
       select: { name: 1, dept: 1, inFavorites: 1 },
+    })
+    .populate({
+      path: "doctor",
+      populate: { path: "profileImg" },
     });
   return reservations;
 };
@@ -206,5 +225,5 @@ module.exports = {
   makeCancelledReservation,
   makeCancelledReservationbyDate,
   makeDoneReservationbyDate,
-  deleteReservation
+  deleteReservation,
 };
