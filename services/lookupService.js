@@ -2,7 +2,7 @@ const _Dept = require("../models/dept.js");
 
 // get depts
 const getDepts = async () => {
-  const depts = await _Dept.find({ status: true });
+  const depts = await _Dept.find({ status: true }).populate("profileImg");
   return depts;
 };
 
@@ -17,12 +17,12 @@ const postDepts = async (name, desc, imgId) => {
 };
 
 const putDepts = async (name, desc, imgId, id) => {
-  const dept = _Dept.findByIdAndUpdate(id, {
+  const dept = await _Dept.findByIdAndUpdate(id, {
     name,
     desc,
     profileImg: imgId
   })
-  return dept
+  return dept;
 };
 
 const deleteDept = async (id) => {

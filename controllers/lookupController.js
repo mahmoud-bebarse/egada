@@ -36,7 +36,7 @@ const putDepts = async (req, res, next) => {
     res.status(200).send(Response(false, {}, "Missing data"));
   } else {
     try {
-      const dept = lookupService.putDepts(id, name, desc, imgId);
+      const dept = lookupService.putDepts(name, desc, imgId, id);
       res
         .status(200)
         .send(Response(true, {}, "dept has been updated successfully"));
