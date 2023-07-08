@@ -32,7 +32,7 @@ const getQuestion = async (id) => {
       path: "answer",
       populate: {
         path: "doctorId",
-        select: { name: 1, _id: 1, profileImg: 0 },
+        select: { name: 1, _id: 1},
       },
     })
     .populate({
@@ -50,7 +50,7 @@ const getAllQuestions = async () => {
       path: "answer",
       populate: {
         path: "doctorId",
-        select: { name: 1, _id: 1, profileImg: 0 },
+        select: { name: 1, _id: 1},
       },
     })
     .populate({
@@ -67,7 +67,7 @@ const getQuestionsByDeptId = async (id) => {
       path: "answer",
       populate: {
         path: "doctorId",
-        select: { name: 1, _id: 1, profileImg: 0 },
+        select: { name: 1, _id: 1 },
       },
     })
     .populate({
@@ -84,7 +84,7 @@ const getQuestionsByPatientId = async (id) => {
       path: "answer",
       populate: {
         path: "doctorId",
-        select: { name: 1, _id: 1, profileImg: 0 },
+        select: { name: 1, _id: 1 },
       },
     })
     .populate({
@@ -124,7 +124,7 @@ const putAnswer = async (id, answer) => {
 const getAllAnswers = async () => {
   const answer = await _Answer.find().populate({
     path: "doctorId",
-    select: { name: 1, _id: 1, profileImg: 0 },
+    select: { name: 1, _id: 1},
   });
   return answer;
 };
